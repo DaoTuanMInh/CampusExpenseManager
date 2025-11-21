@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <ImageButton
+        android:id="@+id/ibtBudgetSetting"
+        android:layout_width="104dp"
+        android:layout_height="87dp"
+        android:background="@drawable/bottom_button_selector"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        android:src="@drawable/outline_account_balance_wallet_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.189"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.317"
+        app:tint="#5FA5AB"
+        tools:src="@drawable/outline_account_balance_wallet_24" />
+
+    <TextView
+        android:id="@+id/txBudgetSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Budget Setting"
+        android:textColor="#5FA5AB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.194"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.405" />
+
+    <ImageButton
+        android:id="@+id/ibtExpenseTracking"
+        android:layout_width="94dp"
+        android:layout_height="89dp"
+        android:background="@drawable/bottom_button_selector"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        android:src="@drawable/outline_add_card_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.798"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.315"
+        app:tint="#5FA5AB"
+        tools:src="@drawable/outline_add_card_24" />
+
+    <ImageButton
+        android:id="@+id/ibtExpenseOverview"
+        android:layout_width="103dp"
+        android:layout_height="99dp"
+        android:background="@drawable/bottom_button_selector"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.827"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.551"
+        app:srcCompat="@drawable/outline_assignment_24"
+        app:tint="#5FA5AB"
+        tools:srcCompat="@drawable/outline_assignment_24" />
+
+    <ImageButton
+        android:id="@+id/ibtExpenseReports"
+        android:layout_width="102dp"
+        android:layout_height="98dp"
+        android:background="@drawable/bottom_button_selector"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        android:src="@drawable/outline_bar_chart_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.754"
+        app:tint="#5FA5AB"
+        tools:src="@drawable/outline_bar_chart_24" />
+
+    <TextView
+        android:id="@+id/txExpenseReports"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Expense Reports"
+        android:textColor="#5FA5AB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.508"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.81" />
+
+    <TextView
+        android:id="@+id/txRecurringExpenses"
+        android:layout_width="132dp"
+        android:layout_height="24dp"
+        android:text="Recurring Expenses"
+        android:textColor="#5FA5AB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.888"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.629" />
+
+    <ImageButton
+        android:id="@+id/ibtRecurringExpenses"
+        android:layout_width="101dp"
+        android:layout_height="94dp"
+        android:background="@drawable/bottom_button_selector"
+        android:clickable="true"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        android:src="@drawable/outline_assignment_add_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.188"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.554"
+        app:tint="#5FA5AB"
+        tools:src="@drawable/outline_assignment_add_24" />
+
+    <TextView
+        android:id="@+id/txExpenseOverview"
+        android:layout_width="130dp"
+        android:layout_height="21dp"
+        android:text="Expense Overview"
+        android:textColor="#5FA5AB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.174"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.627" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/screenshot_2025_11_18_033453" />
+
+    <ImageButton
+        android:id="@+id/ibtNotification"
+        android:layout_width="54dp"
+        android:layout_height="50dp"
+        android:background="#00FFFFFF"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.972"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.112"
+        app:srcCompat="@drawable/outline_notifications_24"
+        tools:srcCompat="@drawable/outline_notifications_24" />
+
+    <ImageButton
+        android:id="@+id/imageButton10"
+        android:layout_width="52dp"
+        android:layout_height="51dp"
+        android:background="#00FFFFFF"
+        android:importantForAccessibility="no"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.043"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.12"
+        app:srcCompat="@drawable/outline_density_medium_24"
+        tools:srcCompat="@drawable/outline_density_medium_24" />
+
+    <TextView
+        android:id="@+id/txExpenseTracking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Expense Tracking"
+        android:textColor="#5FA5AB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.823"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.404" />
+
+    <LinearLayout
+        android:id="@+id/liner"
+        android:layout_width="0dp"
+        android:layout_height="65dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <ImageButton
+            android:id="@+id/ibtHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/drawable"
+            android:clickable="true"
+            android:contentDescription="Home"
+            android:focusable="true"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/outline_home_24" />
+
+        <ImageButton
+            android:id="@+id/ibtInfor"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/drawable"
+            android:clickable="true"
+            android:contentDescription="Infor"
+            android:focusable="true"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/outline_account_circle_24" /> />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

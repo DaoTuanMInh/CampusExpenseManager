@@ -189,7 +189,7 @@
         tools:srcCompat="@drawable/outline_notifications_24" />
 
     <ImageButton
-        android:id="@+id/imageButton10"
+        android:id="@+id/ibtSetting"
         android:layout_width="52dp"
         android:layout_height="51dp"
         android:background="#00FFFFFF"
@@ -254,4 +254,5 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/outline_account_circle_24" /> />
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

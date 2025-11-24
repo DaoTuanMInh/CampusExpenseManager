@@ -126,10 +126,10 @@
         android:src="@drawable/outline_assignment_add_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.806"
+        app:layout_constraintHorizontal_bias="0.816"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.552"
+        app:layout_constraintVertical_bias="0.543"
         app:tint="#5FA5AB"
         tools:src="@drawable/outline_assignment_add_24" />
 
@@ -169,7 +169,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/screenshot_2025_11_18_033453" />
+        app:srcCompat="@drawable/pick" />
 
     <ImageButton
         android:id="@+id/ibtNotification"
@@ -178,6 +178,7 @@
         android:background="#00FFFFFF"
         android:importantForAccessibility="no"
         android:scaleType="centerCrop"
+        app:tint="#5FA5AB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.971"
@@ -194,6 +195,7 @@
         android:background="#00FFFFFF"
         android:importantForAccessibility="no"
         android:scaleType="centerCrop"
+        app:tint="#5FA5AB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.043"

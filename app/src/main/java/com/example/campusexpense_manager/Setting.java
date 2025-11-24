@@ -3,6 +3,7 @@ package com.example.campusexpense_manager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -34,6 +35,22 @@ public class Setting extends AppCompatActivity {
             sharedPreferencesEditor.apply();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
+        });
+        ibtHome = findViewById(R.id.ibtHome);
+        ibtInfor = findViewById(R.id.ibtInfor);
+
+        ibtHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Setting.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        ibtInfor.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(Setting.this, Infor.class);
+                startActivity(intent);
+            }
         });
     }
 }

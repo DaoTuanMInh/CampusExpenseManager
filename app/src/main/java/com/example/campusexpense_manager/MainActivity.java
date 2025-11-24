@@ -61,8 +61,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        ibtRecurringExpenses.setOnClickListener(v-> {
-            Intent intent = new Intent(this, RecurringExpense.class);
+        ibtRecurringExpenses.setOnClickListener(v->{
+            Intent intent = new Intent(this, RecurringExpenses.class);
             startActivity(intent);
         });
         ibtBudgetSetting.setOnClickListener(v-> {
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ibtExpenseOverview.setOnClickListener(v->{
-            Intent intent = new Intent(this, RecurringExpenses.class);
+            Intent intent = new Intent(this, ExpenseOverview.class);
             startActivity(intent);
         });
 

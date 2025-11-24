@@ -1,6 +1,9 @@
 package com.example.campusexpense_manager;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,7 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class Infor extends AppCompatActivity {
-
+    ImageButton ibtHome, ibtInfor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,5 +23,23 @@ public class Infor extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        ibtHome = findViewById(R.id.ibtHome);
+        ibtInfor = findViewById(R.id.ibtInfor);
+
+        ibtHome.setSelected(false);
+        ibtInfor.setSelected(true);
+
+        ibtInfor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ibtHome.setSelected(false);
+                ibtInfor.setSelected(true);
+            }
+        });
+        ibtHome.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        });
+
     }
 }

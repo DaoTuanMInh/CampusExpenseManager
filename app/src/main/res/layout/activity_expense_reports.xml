@@ -7,6 +7,56 @@
     android:layout_height="match_parent"
     tools:context=".ExpenseReports">
 
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/pick" />
+
+    <LinearLayout
+        android:id="@+id/liner"
+        android:layout_width="0dp"
+        android:layout_height="65dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <ImageButton
+            android:id="@+id/ibtHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/drawable"
+            android:clickable="true"
+            android:contentDescription="Home"
+            android:focusable="true"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/outline_home_24" />
+
+        <ImageButton
+            android:id="@+id/ibtInfor"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/drawable"
+            android:clickable="true"
+            android:contentDescription="Infor"
+            android:focusable="true"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/outline_account_circle_24" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"

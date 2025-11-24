@@ -73,10 +73,10 @@
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.827"
+        app:layout_constraintHorizontal_bias="0.188"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.551"
+        app:layout_constraintVertical_bias="0.539"
         app:srcCompat="@drawable/outline_assignment_24"
         app:tint="#5FA5AB"
         tools:srcCompat="@drawable/outline_assignment_24" />
@@ -140,10 +140,10 @@
         android:src="@drawable/outline_assignment_add_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.188"
+        app:layout_constraintHorizontal_bias="0.816"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.554"
+        app:layout_constraintVertical_bias="0.543"
         app:tint="#5FA5AB"
         tools:src="@drawable/outline_assignment_add_24" />
 

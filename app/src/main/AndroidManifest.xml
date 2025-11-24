@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CampusExpenseManager">
         <activity
+            android:name=".RecurringExpense"
+            android:exported="false" />
+        <activity
+            android:name=".BudgetSetting"
+            android:exported="false" />
+        <activity
             android:name=".Notification"
             android:exported="false" />
         <activity

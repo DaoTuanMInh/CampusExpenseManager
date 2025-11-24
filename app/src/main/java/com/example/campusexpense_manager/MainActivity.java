@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-    ImageButton ibtHome, ibtInfor, ibtSetting;
+    ImageButton ibtHome, ibtInfor, ibtSetting, ibtNotification, ibtExpenseReports, ibtExpenseOverview, ibtExpenseTracking, ibtBudgetSetting, ibtRecurringExpenses;
     SharedPreferences sharedPreferences;
 
 
@@ -38,9 +38,15 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        ibtBudgetSetting = findViewById(R.id.ibtBudgetSetting);
+        ibtRecurringExpenses = findViewById(R.id.ibtRecurringExpenses);
         ibtHome = findViewById(R.id.ibtHome);
         ibtInfor = findViewById(R.id.ibtInfor);
         ibtSetting = findViewById(R.id.ibtSetting);
+        ibtNotification = findViewById(R.id.ibtNotification);
+        ibtExpenseReports = findViewById(R.id.ibtExpenseReports);
+        ibtExpenseOverview = findViewById(R.id.ibtExpenseOverview);
+        ibtExpenseTracking = findViewById(R.id.ibtExpenseTracking);
 
         // Trang Home là trang chính → nút Home mặc định được chọn
         ibtHome.setSelected(true);
@@ -55,6 +61,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ibtRecurringExpenses.setOnClickListener(v-> {
+            Intent intent = new Intent(this, RecurringExpense.class);
+            startActivity(intent);
+        });
+        ibtBudgetSetting.setOnClickListener(v-> {
+            Intent intent = new Intent(this, BudgetSetting.class);
+            startActivity(intent);
+        });
         // Bấm Infor
         ibtInfor.setOnClickListener(v-> {
             Intent intent = new Intent(this, Infor.class);
@@ -63,6 +77,26 @@ public class MainActivity extends AppCompatActivity {
 
         ibtSetting.setOnClickListener(v->{
             Intent intent = new Intent(this, Setting.class);
+            startActivity(intent);
+        });
+
+        ibtNotification.setOnClickListener(v->{
+            Intent intent = new Intent(this, Notification.class);
+            startActivity(intent);
+        });
+
+        ibtExpenseReports.setOnClickListener(v->{
+            Intent intent = new Intent(this, ExpenseReports.class);
+            startActivity(intent);
+        });
+
+        ibtExpenseOverview.setOnClickListener(v->{
+            Intent intent = new Intent(this, RecurringExpenses.class);
+            startActivity(intent);
+        });
+
+        ibtExpenseTracking.setOnClickListener(v->{
+            Intent intent = new Intent(this, ExpenseTracking.class);
             startActivity(intent);
         });
     }

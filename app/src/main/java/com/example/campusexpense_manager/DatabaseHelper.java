@@ -104,27 +104,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + TABLE_USER_COLUM_PASSWORD + " TEXT, "
                 + TABLE_USER_COLUM_EMAIL + " TEXT, "
                 + TABLE_USER_COLUM_PHONENUMBER + " TEXT, "
-                + TABLE_USER_COLUM_ROLE_ID + " INTERGER)";
+                + TABLE_USER_COLUM_ROLE_ID + " INTEGER)";
         db.execSQL(CREATE_TABLE_USER);
 
         String CREATE_TABLE_CATEGORIES = "CREATE TABLE " + TABLE_CATEGORIES + "("
                 + TABLE_CATEGORY_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TABLE_CATEGORY_COLUM_CATEGORYNAME + " TEXT, "
-                + TABLE_CATEGORY_COLUM_USER_ID + " INTERGER)";
+                + TABLE_CATEGORY_COLUM_USER_ID + " INTEGER)";
         db.execSQL(CREATE_TABLE_CATEGORIES);
 
         String CREATE_TABLE_SETTINGS = "CREATE TABLE " + TABLE_SETTINGS + "("
                 + TABLE_SETTING_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TABLE_SETTING_COLUM_THEMMODE + " TEXT, "
-                + TABLE_SETTING_COLUM_USER_ID + " INTERGER)";
+                + TABLE_SETTING_COLUM_USER_ID + " INTEGER)";
         db.execSQL(CREATE_TABLE_SETTINGS);
 
         String CREATE_TABLE_OVERVIEWOFEXPENSES = "CREATE TABLE " + TABLE_OVERVIEWOFEXPENSES + "("
                 + TABLE_OVERVIEWOFEXPENSE_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + TABLE_OVERVIEWOFEXPENSE_COLUM_TOTALEXPENSE + " INTERGER, "
-                + TABLE_OVERVIEWOFEXPENSE_COLUM_REMAININGBUDGET + " INTERGER, "
+                + TABLE_OVERVIEWOFEXPENSE_COLUM_TOTALEXPENSE + " INTEGER, "
+                + TABLE_OVERVIEWOFEXPENSE_COLUM_REMAININGBUDGET + " INTEGER, "
                 + TABLE_OVERVIEWOFEXPENSE_COLUM_MONTH + " DATETIME, "
-                + TABLE_OVERVIEWOFEXPENSE_COLUM_USER_ID + " INTERGER)";
+                + TABLE_OVERVIEWOFEXPENSE_COLUM_USER_ID + " INTEGER)";
         db.execSQL(CREATE_TABLE_OVERVIEWOFEXPENSES);
 
         String CREATE_TABLE_EXPENSEREPORTS = "CREATE TABLE " + TABLE_EXPENSEREPORTS + "("
@@ -137,9 +137,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         String CREATE_TABLE_NOTIFICATIONS = "CREATE TABLE " + TABLE_NOTIFICATIONS + "("
                 + TABLE_NOTIFICATION_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + TABLE_NOTIFICATION_COLUM_MESSAGE + " TEXXT, "
+                + TABLE_NOTIFICATION_COLUM_MESSAGE + " TEXT, "
                 + TABLE_NOTIFICATION_COLUM_DATE + " DATETIME, "
-                + TABLE_NOTIFICATION_COLUM_USER_ID + " INTERGER)";
+                + TABLE_NOTIFICATION_COLUM_USER_ID + " INTEGER)";
         db.execSQL(CREATE_TABLE_NOTIFICATIONS);
 
         String CREATE_TABLE_VIEWOVERALLREPORT = "CREATE TABLE " + TABLE_VIEWOVERALLREPORT + "("
@@ -150,7 +150,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_TABLE_VIEWOVERALLREPORT);
 
         String CREATE_TABLE_EXPENSETRACKING = "CREATE TABLE " + TABLE_EXPENSETRACKING + "("
-                + TABLE_EXPENSEREPORT_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + TABLE_EXPENSETRACKING_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TABLE_EXPENSETRACKING_COLUM_CATEGORY + " TEXT, "
                 + TABLE_EXPENSETRACKING_COLUM_AMOUNT + " INTEGER, "
                 + TABLE_EXPENSETRACKING_COLUM_DATE + " DATETIME, "
@@ -210,7 +210,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(1),
                     cursor.getString(2),
                     cursor.getString(3),
-                    cursor.getInt(4)
+                    cursor.getString(4)
             );
         }
         cursor.close();

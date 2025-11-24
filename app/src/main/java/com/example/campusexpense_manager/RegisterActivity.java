@@ -28,7 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
             String username = edtRegisterUsername.getText().toString();
             String password = edtRegisterPassword.getText().toString();
             String email = edtRegisterEmail.getText().toString();
-            int phonenumber = Integer.parseInt(edtRegisterPhonenumber.getText().toString().trim());
+            String phonenumber = edtRegisterPhonenumber.getText().toString().trim();
             User user = new User(0, username, password, email, phonenumber);
             try{
                 DatabaseHelper db = new DatabaseHelper(this);

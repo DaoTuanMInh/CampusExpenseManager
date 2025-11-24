@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageButton ibtHome, ibtInfor;
+    ImageButton ibtHome, ibtInfor, ibtSetting;
     SharedPreferences sharedPreferences;
 
 
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         ibtHome = findViewById(R.id.ibtHome);
         ibtInfor = findViewById(R.id.ibtInfor);
+        ibtSetting = findViewById(R.id.ibtSetting);
 
         // Trang Home là trang chính → nút Home mặc định được chọn
         ibtHome.setSelected(true);
@@ -55,13 +56,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Bấm Infor
-        ibtInfor.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ibtHome.setSelected(false);
-                ibtInfor.setSelected(true);
-                // TODO: chuyển sang Activity Infor
-            }
+        ibtInfor.setOnClickListener(v-> {
+            Intent intent = new Intent(this, Infor.class);
+            startActivity(intent);
+        });
+
+        ibtSetting.setOnClickListener(v->{
+            Intent intent = new Intent(this, Setting.class);
+            startActivity(intent);
         });
     }
 }

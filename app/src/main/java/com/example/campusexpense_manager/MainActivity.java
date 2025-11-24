@@ -91,12 +91,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ibtExpenseOverview.setOnClickListener(v->{
-            Intent intent = new Intent(this, RecurringExpenses.class);
+            Intent intent = new Intent(this, ExpenseOverview.class);
             startActivity(intent);
         });
 
         ibtExpenseTracking.setOnClickListener(v->{
-            Intent intent = new Intent(this, ExpenseOverview.class);
+            Intent intent = new Intent(this, ExpenseTracking.class);
             startActivity(intent);
         });
     }

@@ -5,9 +5,9 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private int phonenumber;
+    private String phonenumber;
 
-    public User(int id, String username, String password, String email, int phonenumber){
+    public User(int id, String username, String password, String email, String phonenumber){
         this.id =id;
         this.username = username;
         this.password = password;
@@ -23,7 +23,7 @@ public class User {
     public String getEmail(){
         return this.email;
     }
-    public int getPhonenumber(){
+    public String getPhonenumber(){
         return this.phonenumber;
     }
     public int getId(){

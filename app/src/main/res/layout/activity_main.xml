@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
     <ImageButton
         android:id="@+id/ibtBudgetSetting"
         android:layout_width="104dp"
@@ -28,19 +27,6 @@
         app:tint="#5FA5AB"
         tools:src="@drawable/outline_account_balance_wallet_24" />
 
-    <TextView
-        android:id="@+id/txBudgetSetting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Budget Setting"
-        android:textColor="#5FA5AB"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.194"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.405" />
-
     <ImageButton
         android:id="@+id/ibtExpenseTracking"
         android:layout_width="94dp"
@@ -54,12 +40,25 @@
         android:src="@drawable/outline_add_card_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.798"
+        app:layout_constraintHorizontal_bias="0.81"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.315"
         app:tint="#5FA5AB"
         tools:src="@drawable/outline_add_card_24" />
+
+    <TextView
+        android:id="@+id/txBudgetSetting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Budget Setting"
+        android:textColor="#5FA5AB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.811"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.407" />
 
     <ImageButton
         android:id="@+id/ibtExpenseOverview"
@@ -73,10 +72,10 @@
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.827"
+        app:layout_constraintHorizontal_bias="0.188"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.551"
+        app:layout_constraintVertical_bias="0.555"
         app:srcCompat="@drawable/outline_assignment_24"
         app:tint="#5FA5AB"
         tools:srcCompat="@drawable/outline_assignment_24" />
@@ -109,23 +108,10 @@
         android:textColor="#5FA5AB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.508"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.81" />
-
-    <TextView
-        android:id="@+id/txRecurringExpenses"
-        android:layout_width="132dp"
-        android:layout_height="24dp"
-        android:text="Recurring Expenses"
-        android:textColor="#5FA5AB"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.888"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.629" />
+        app:layout_constraintVertical_bias="0.809" />
 
     <ImageButton
         android:id="@+id/ibtRecurringExpenses"
@@ -140,25 +126,38 @@
         android:src="@drawable/outline_assignment_add_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.188"
+        app:layout_constraintHorizontal_bias="0.806"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.554"
+        app:layout_constraintVertical_bias="0.552"
         app:tint="#5FA5AB"
         tools:src="@drawable/outline_assignment_add_24" />
 
     <TextView
+        android:id="@+id/txRecurringExpenses"
+        android:layout_width="132dp"
+        android:layout_height="24dp"
+        android:text="Recurring Expenses"
+        android:textColor="#5FA5AB"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.849"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.629" />
+
+    <TextView
         android:id="@+id/txExpenseOverview"
-        android:layout_width="130dp"
-        android:layout_height="21dp"
+        android:layout_width="115dp"
+        android:layout_height="23dp"
         android:text="Expense Overview"
         android:textColor="#5FA5AB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.174"
+        app:layout_constraintHorizontal_bias="0.172"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.627" />
+        app:layout_constraintVertical_bias="0.63" />
 
     <ImageView
         android:id="@+id/imageView"
@@ -212,10 +211,10 @@
         android:textColor="#5FA5AB"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.823"
+        app:layout_constraintHorizontal_bias="0.169"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.404" />
+        app:layout_constraintVertical_bias="0.407" />
 
     <LinearLayout
         android:id="@+id/liner"
@@ -252,7 +251,7 @@
             android:contentDescription="Infor"
             android:focusable="true"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/outline_account_circle_24" /> />
+            app:srcCompat="@drawable/outline_account_circle_24" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

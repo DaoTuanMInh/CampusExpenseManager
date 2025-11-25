@@ -235,26 +235,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public int getTotalRemaining(int userId, int month) {
         SQLiteDatabase db = this.getReadableDatabase();
         int totalRemaining = 0;
-
-        String query = "SELECT SUM(bs.limitamount) AS total_budget, " +
-                "IFNULL(SUM(et.amount),0) AS total_spent " +
-                "FROM budget_setting bs " +
-                "LEFT JOIN expense_tracking et " +
-                "ON bs.category = et.category AND bs.user_id = et.user_id " +
-                "AND strftime('%m', et.date) = ? " +
-                "WHERE bs.user_id = ? AND strftime('%m', bs.month) = ?";
-
         String monthStr = month < 10 ? "0" + month : String.valueOf(month);
 
-        Cursor cursor = db.rawQuery(query, new String[]{monthStr, String.valueOf(userId), monthStr});
-        if (cursor.moveToFirst()) {
-            int budget = cursor.getInt(cursor.getColumnIndexOrThrow("total_budget"));
-            int spent = cursor.getInt(cursor.getColumnIndexOrThrow("total_spent"));
-            totalRemaining = budget - spent;
+        // Tổng budget
+        Cursor cursorBudget = db.rawQuery(
+                "SELECT SUM(limitamount) AS total_budget FROM budget_setting " +
+                        "WHERE user_id = ? AND strftime('%m', month) = ?",
+                new String[]{String.valueOf(userId), monthStr});
+        int totalBudget = 0;
+        if(cursorBudget.moveToFirst()){
+            totalBudget = cursorBudget.getInt(cursorBudget.getColumnIndexOrThrow("total_budget"));
         }
-        cursor.close();
+        cursorBudget.close();
+
+        // Tổng spent
+        Cursor cursorSpent = db.rawQuery(
+                "SELECT SUM(amount) AS total_spent FROM expense_tracking " +
+                        "WHERE user_id = ? AND strftime('%m', date) = ?",
+                new String[]{String.valueOf(userId), monthStr});
+        int totalSpent = 0;
+        if(cursorSpent.moveToFirst()){
+            totalSpent = cursorSpent.getInt(cursorSpent.getColumnIndexOrThrow("total_spent"));
+        }
+        cursorSpent.close();
+
+        totalRemaining = totalBudget - totalSpent;
         return totalRemaining;
     }
+
+
     public Cursor getExpenseDetailsByMonth(int userId, int month) {
         SQLiteDatabase db = this.getReadableDatabase();
 

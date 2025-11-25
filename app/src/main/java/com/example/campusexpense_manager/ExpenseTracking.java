@@ -15,6 +15,7 @@ public class ExpenseTracking extends AppCompatActivity {
     ImageButton ibtHome, ibtInfor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_expense_tracking);

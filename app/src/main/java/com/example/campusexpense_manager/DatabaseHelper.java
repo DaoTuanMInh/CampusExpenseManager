@@ -159,7 +159,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + TABLE_EXPENSETRACKING_COLUM_CATEGORY_ID + " INTEGER)";
         db.execSQL(CREATE_TABLE_EXPENSETRACKING);
 
-        String CREATE_TABLE_BUDGETSETTING = "CREATE TABLE " + TABLE_BUDGETSETTING + "("
+        String  CREATE_TABLE_BUDGETSETTING= "CREATE TABLE " + TABLE_BUDGETSETTING + "("
                 + TABLE_BUDGETSETTING_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TABLE_BUDGETSETTING_COLUM_CATEGORY + " TEXT, "
                 + TABLE_BUDGETSETTING_COLUM_LIMITAMOUNT + " INTEGER, "
@@ -217,4 +217,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return user;
     }
+    public Cursor getAllExpenseReports(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query =
+                "SELECT bs.category AS category, " +
+                        "SUM(et.amount) AS total_amount, " +
+                        "bs.limitamount - SUM(et.amount) AS remaining_budget " +
+                        "FROM budget_setting bs " +
+                        "LEFT JOIN expense_tracking et " +
+                        "ON bs.category = et.category AND bs.user_id = et.user_id " +
+                        "WHERE bs.user_id = ? " +
+                        "GROUP BY bs.category, bs.limitamount";
+
+        return db.rawQuery(query, new String[]{String.valueOf(userId)});
+    }
+    public int getTotalRemaining(int userId, int month) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        int totalRemaining = 0;
+
+        String query = "SELECT SUM(bs.limitamount) AS total_budget, " +
+                "IFNULL(SUM(et.amount),0) AS total_spent " +
+                "FROM budget_setting bs " +
+                "LEFT JOIN expense_tracking et " +
+                "ON bs.category = et.category AND bs.user_id = et.user_id " +
+                "AND strftime('%m', et.date) = ? " +
+                "WHERE bs.user_id = ? AND strftime('%m', bs.month) = ?";
+
+        String monthStr = month < 10 ? "0" + month : String.valueOf(month);
+
+        Cursor cursor = db.rawQuery(query, new String[]{monthStr, String.valueOf(userId), monthStr});
+        if (cursor.moveToFirst()) {
+            int budget = cursor.getInt(cursor.getColumnIndexOrThrow("total_budget"));
+            int spent = cursor.getInt(cursor.getColumnIndexOrThrow("total_spent"));
+            totalRemaining = budget - spent;
+        }
+        cursor.close();
+        return totalRemaining;
+    }
+    public Cursor getExpenseDetailsByMonth(int userId, int month) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT bs.category AS category, " +
+                "IFNULL(SUM(et.amount),0) AS amount_used " +
+                "FROM budget_setting bs " +
+                "LEFT JOIN expense_tracking et " +
+                "ON bs.category = et.category AND bs.user_id = et.user_id " +
+                "AND strftime('%m', et.date) = ? " +
+                "WHERE bs.user_id = ? AND strftime('%m', bs.month) = ? " +
+                "GROUP BY bs.category";
+
+        String monthStr = month < 10 ? "0" + month : String.valueOf(month);
+        return db.rawQuery(query, new String[]{monthStr, String.valueOf(userId), monthStr});
+    }
+
 }

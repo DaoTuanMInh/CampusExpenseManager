@@ -12,10 +12,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "APDP_Expense";
     private static final int DATABASE_VERSION = 1;
 
-    //Table Role
-    private  static  String TABLE_ROLE = "role";
-    private  static String TABLE_ROLE_COLUM_ID = "id";
-    private static String TABLE_ROLE_COLUM_ROLENAME = "rolename";
 
     //Table User
     private static String TABLE_USER = "users";
@@ -90,21 +86,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_BUDGETSETTING_COLUM_USER_ID = "user_id";
     private static final String TABLE_BUDGETSETTING_COLUM_CATEGORY_ID = "category_id";
 
+    @Override
+    public void onConfigure(SQLiteDatabase db) {
+        super.onConfigure(db);
+        db.setForeignKeyConstraintsEnabled(true);
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TABLE_ROLE = "CREATE TABLE " + TABLE_ROLE + "("
-                + TABLE_ROLE_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + TABLE_ROLE_COLUM_ROLENAME + " TEXT)";
-        db.execSQL(CREATE_TABLE_ROLE);
 
         String CREATE_TABLE_USER = "CREATE TABLE " + TABLE_USER + "("
                 + TABLE_USER_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TABLE_USER_COLUM_USERNAME + " TEXT, "
                 + TABLE_USER_COLUM_PASSWORD + " TEXT, "
                 + TABLE_USER_COLUM_EMAIL + " TEXT, "
-                + TABLE_USER_COLUM_PHONENUMBER + " TEXT, "
-                + TABLE_USER_COLUM_ROLE_ID + " INTEGER)";
+                + TABLE_USER_COLUM_PHONENUMBER + " TEXT) ";
+
         db.execSQL(CREATE_TABLE_USER);
 
         String CREATE_TABLE_CATEGORIES = "CREATE TABLE " + TABLE_CATEGORIES + "("
@@ -171,7 +168,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ROLE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORIES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
@@ -226,7 +222,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         "bs.limitamount - SUM(et.amount) AS remaining_budget " +
                         "FROM budget_setting bs " +
                         "LEFT JOIN expense_tracking et " +
-                        "ON bs.category = et.category AND bs.user_id = et.user_id " +
+                        "ON bs.category_id = et.category_id AND bs.user_id = et.user_id " +
                         "WHERE bs.user_id = ? " +
                         "GROUP BY bs.category, bs.limitamount";
 
@@ -239,7 +235,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Tổng budget
         Cursor cursorBudget = db.rawQuery(
-                "SELECT SUM(limitamount) AS total_budget FROM budget_setting " +
+                "SELECT IFNULL(SUM(limitamount), 0) AS total_budget FROM budget_setting " +
                         "WHERE user_id = ? AND strftime('%m', month) = ?",
                 new String[]{String.valueOf(userId), monthStr});
         int totalBudget = 0;
@@ -279,5 +275,4 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String monthStr = month < 10 ? "0" + month : String.valueOf(month);
         return db.rawQuery(query, new String[]{monthStr, String.valueOf(userId), monthStr});
     }
-
 }

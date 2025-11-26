@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "APDP_Expense";
     private static final int DATABASE_VERSION = 1;
@@ -275,4 +277,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String monthStr = month < 10 ? "0" + month : String.valueOf(month);
         return db.rawQuery(query, new String[]{monthStr, String.valueOf(userId), monthStr});
     }
+    public long addBudgetSetting(String category, int limitAmount, String date, int userId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TABLE_BUDGETSETTING_COLUM_CATEGORY, category);
+        values.put(TABLE_BUDGETSETTING_COLUM_LIMITAMOUNT, limitAmount);
+        values.put(TABLE_BUDGETSETTING_COLUM_MONTH, date);
+        values.put(TABLE_BUDGETSETTING_COLUM_USER_ID, userId);
+
+        long id = db.insert(TABLE_BUDGETSETTING, null, values);
+        db.close();
+        return id;
+    }
+
+    public int updateBudgetSetting(int id, String category, int limitAmount, String date) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TABLE_BUDGETSETTING_COLUM_CATEGORY, category);
+        values.put(TABLE_BUDGETSETTING_COLUM_LIMITAMOUNT, limitAmount);
+        values.put(TABLE_BUDGETSETTING_COLUM_MONTH, date);
+
+        return db.update(TABLE_BUDGETSETTING, values, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public int deleteBudgetSetting(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_BUDGETSETTING, "id=?", new String[]{String.valueOf(id)});
+    }
+
+    public ArrayList<BudgetItem> getAllBudgetSettings(int userId) {
+        ArrayList<BudgetItem> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(
+                "SELECT id, category, limitamount, month FROM budget_setting WHERE user_id=?",
+                new String[]{String.valueOf(userId)}
+        );
+
+        if(cursor.moveToFirst()){
+            do{
+                list.add(new BudgetItem(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getInt(2),
+                        cursor.getString(3)
+                ));
+            }while(cursor.moveToNext());
+        }
+
+        cursor.close();
+        return list;
+    }
+
 }

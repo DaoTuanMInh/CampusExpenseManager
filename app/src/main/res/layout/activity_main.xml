@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <ImageButton
-        android:id="@+id/ibtBudgetSetting"
+        android:id="@+id/ibtExpenseTracking"
         android:layout_width="104dp"
         android:layout_height="87dp"
         android:background="@drawable/bottom_button_selector"
@@ -28,7 +28,7 @@
         tools:src="@drawable/outline_account_balance_wallet_24" />
 
     <ImageButton
-        android:id="@+id/ibtExpenseTracking"
+        android:id="@+id/ibtBudgetSetting"
         android:layout_width="94dp"
         android:layout_height="89dp"
         android:background="@drawable/bottom_button_selector"

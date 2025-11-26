@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- Mục chi tiêu -->
+    <EditText
+        android:id="@+id/edtEat"
+        android:layout_width="386dp"
+        android:layout_height="71dp"
+        android:hint="Spending section"
+        android:inputType="textPersonName" />
+
+    <!-- Số tiền -->
+    <EditText
+        android:id="@+id/edtMoney"
+        android:layout_width="386dp"
+        android:layout_height="87dp"
+        android:layout_marginTop="8dp"
+        android:hint="Money:"
+        android:inputType="number" />
+
+    <!-- Ngày chi tiêu -->
+    <EditText
+        android:id="@+id/edtDate"
+        android:layout_width="386dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="8dp"
+        android:focusable="false"
+        android:hint="Date:" />
+</LinearLayout>

@@ -12,17 +12,18 @@ import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "APDP_Expense";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
 
     //Table User
     private static String TABLE_USER = "users";
     private static final String TABLE_USER_COLUM_ID = "id";
     private static final String TABLE_USER_COLUM_USERNAME = "username";
+    private static final String TABLE_USER_COLUM_FULLNAME = "fullname";
     private static final String TABLE_USER_COLUM_PASSWORD = "password";
     private static final String TABLE_USER_COLUM_EMAIL = "email";
     private static final String TABLE_USER_COLUM_PHONENUMBER = "phonenumber";
-    private static final String TABLE_USER_COLUM_ROLE_ID = "role_id";
+
     public DatabaseHelper(@Nullable Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -100,10 +101,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         String CREATE_TABLE_USER = "CREATE TABLE " + TABLE_USER + "("
                 + TABLE_USER_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + TABLE_USER_COLUM_USERNAME + " TEXT, "
+                + TABLE_USER_COLUM_FULLNAME + " TEXT, "
                 + TABLE_USER_COLUM_PASSWORD + " TEXT, "
                 + TABLE_USER_COLUM_EMAIL + " TEXT, "
                 + TABLE_USER_COLUM_PHONENUMBER + " TEXT) ";
-
         db.execSQL(CREATE_TABLE_USER);
 
         String CREATE_TABLE_CATEGORIES = "CREATE TABLE " + TABLE_CATEGORIES + "("
@@ -186,6 +187,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db  = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TABLE_USER_COLUM_USERNAME, user.getUsername());
+        values.put(TABLE_USER_COLUM_FULLNAME, user.getFullname());
         values.put(TABLE_USER_COLUM_PASSWORD, user.getPassword());
         values.put(TABLE_USER_COLUM_EMAIL, user.getEmail());
         values.put(TABLE_USER_COLUM_PHONENUMBER, user.getPhonenumber());
@@ -194,10 +196,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return id;
     }
 
+
+
     public User getUserByUsernameAndPasword(String username, String password){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_USER,
-                new String[]{TABLE_USER_COLUM_ID, TABLE_USER_COLUM_USERNAME, TABLE_USER_COLUM_PASSWORD, TABLE_USER_COLUM_EMAIL, TABLE_USER_COLUM_PHONENUMBER},
+                new String[]{TABLE_USER_COLUM_ID, TABLE_USER_COLUM_USERNAME, TABLE_USER_COLUM_FULLNAME, TABLE_USER_COLUM_PASSWORD, TABLE_USER_COLUM_EMAIL, TABLE_USER_COLUM_PHONENUMBER},
                 TABLE_USER_COLUM_USERNAME + " = ? AND " + TABLE_USER_COLUM_PASSWORD + " = ?",
                 new String[]{username, password},
                 null, null, null );
@@ -208,12 +212,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getString(1),
                     cursor.getString(2),
                     cursor.getString(3),
-                    cursor.getString(4)
+                    cursor.getString(4),
+                    cursor.getString(5)
             );
         }
         cursor.close();
         db.close();
         return user;
+    }
+    public User getUserByUsername(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_USER,
+                null, // lấy tất cả cột
+                TABLE_USER_COLUM_USERNAME + "=?",
+                new String[]{username},
+                null, null, null
+        );
+
+        if (cursor != null && cursor.moveToFirst()) {
+            User user = new User(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_USERNAME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_FULLNAME)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_PASSWORD)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_EMAIL)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_PHONENUMBER))
+            );
+            cursor.close();
+            return user;
+        }
+
+        return null;
     }
     public Cursor getAllExpenseReports(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();

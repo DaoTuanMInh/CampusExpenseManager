@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -14,21 +15,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import java.util.Calendar;
 
 public class ExpenseReports extends AppCompatActivity {
 
     ImageButton ibtHome, ibtInfor;
-    TextView tvRemainingBudget;
-    TableLayout tbExpenseReports;
-    DatabaseHelper dbHelper;
+    TextView tvTotalRemaining, tvLastMonth, tvThisMonth;
+    TableLayout tbReportDetails;
     int userId;
     SharedPreferences sharedPreferences;
+    DatabaseHelper dbHelper;
+    int currentMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         sharedPreferences = getSharedPreferences("AppData", MODE_PRIVATE);
 
-        if (!sharedPreferences.getBoolean("isLogin",false)){
+        if (!sharedPreferences.getBoolean("isLogin", false)) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
@@ -42,57 +45,95 @@ public class ExpenseReports extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         userId = (int) sharedPreferences.getLong("user_id", -1);
-        tvRemainingBudget = findViewById(R.id.tvRemainingBudget);
-        tbExpenseReports = findViewById(R.id.tbExpenseReports);
+        tvTotalRemaining = findViewById(R.id.tvTotalRemaining);
+        tvLastMonth = findViewById(R.id.tvLastMonth);
+        tvThisMonth = findViewById(R.id.tvThisMonth);
+        tbReportDetails = findViewById(R.id.tbReportDetails);
         ibtHome = findViewById(R.id.ibtHome);
         ibtInfor = findViewById(R.id.ibtInfor);
-        dbHelper = new DatabaseHelper(this);
-        loadExpenses(userId);
 
-        ibtHome.setOnClickListener(v -> {
-            Intent intent = new Intent(ExpenseReports.this, MainActivity.class);
-            startActivity(intent);
+        dbHelper = new DatabaseHelper(this);
+
+        // Lấy tháng hiện tại
+        Calendar calendar = Calendar.getInstance();
+        currentMonth = calendar.get(Calendar.MONTH) + 1; // tháng từ 1-12
+
+        // Hiển thị mặc định tháng này
+        loadMonth(currentMonth);
+
+        // Click sự kiện cho LastMonth
+        tvLastMonth.setOnClickListener(v -> {
+            int lastMonth = currentMonth - 1;
+            if (lastMonth <= 0) lastMonth = 12;
+            loadMonth(lastMonth);
         });
 
-        ibtInfor.setOnClickListener(v -> {
-            Intent intent = new Intent(ExpenseReports.this, Infor.class);
-            startActivity(intent);
+        // Click sự kiện cho ThisMonth
+        tvThisMonth.setOnClickListener(v -> loadMonth(currentMonth));
+
+        ibtHome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ExpenseReports.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        ibtInfor.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(ExpenseReports.this, Infor.class);
+                startActivity(intent);
+            }
         });
     }
-    private void loadExpenses(int userId) {
-        Cursor cursor = dbHelper.getAllExpenseReports(userId);
-        if (cursor != null && cursor.moveToFirst()) {
+    private void loadMonth(int month) {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int currMonth = calendar.get(Calendar.MONTH) + 1;
 
-            do {
+        // Nếu tháng xem < tháng hiện tại, giảm 1 năm
+        if (month > currMonth) {
+            year--;  // Ví dụ xem tháng 12 hiện tại là tháng 1, thì giảm năm
+        }
+
+        String yearMonth = year + "-" + String.format("%02d", month);
+
+        // Lấy tổng Remaining Budget
+        int remaining = dbHelper.getTotalRemaining(userId, yearMonth);
+        tvTotalRemaining.setText("Remaining Budget: " + remaining);
+
+        // Xóa các row cũ
+        tbReportDetails.removeViews(1, tbReportDetails.getChildCount() - 1);
+
+        // Lấy danh sách category có budget trong tháng
+        Cursor cursor = dbHelper.getExpenseDetailsByYearMonth(userId, yearMonth);
+
+        if (cursor.getCount() == 0) {
+            // Không có dữ liệu -> hiển thị row thông báo
+            TableRow row = (TableRow) getLayoutInflater().inflate(R.layout.expense_row, tbReportDetails, false);
+            TextView tvCategory = row.findViewById(R.id.tvCategoryRow);
+            TextView tvAmount = row.findViewById(R.id.tvAmountRow);
+            tvCategory.setText("No data");
+            tvAmount.setText("-");
+            tbReportDetails.addView(row);
+        } else {
+            while (cursor.moveToNext()) {
                 String category = cursor.getString(cursor.getColumnIndexOrThrow("category"));
-                int amount = cursor.getInt(cursor.getColumnIndexOrThrow("total_amount"));
-                int remaining = cursor.getInt(cursor.getColumnIndexOrThrow("remaining_budget"));
+                int amountUsed = cursor.getInt(cursor.getColumnIndexOrThrow("amount_used"));
 
-                // tạo row
-                TableRow row = (TableRow) getLayoutInflater()
-                        .inflate(R.layout.table_row_expense, null, false);
-
+                TableRow row = (TableRow) getLayoutInflater().inflate(R.layout.expense_row, tbReportDetails, false);
                 TextView tvCategory = row.findViewById(R.id.tvCategoryRow);
                 TextView tvAmount = row.findViewById(R.id.tvAmountRow);
 
                 tvCategory.setText(category);
-                tvAmount.setText(String.valueOf(amount));
+                tvAmount.setText(String.valueOf(amountUsed));
 
-                // Thêm click listener cho row
-                int finalRemaining = remaining; // để sử dụng trong lambda
-                row.setOnClickListener(v -> {
-                    tvRemainingBudget.setText("Remaining Budget: " + finalRemaining);
-                });
-
-                tbExpenseReports.addView(row);
-
-            } while (cursor.moveToNext());
-
-            cursor.close();
+                tbReportDetails.addView(row);
+            }
         }
+        cursor.close();
     }
-
 
 
 }

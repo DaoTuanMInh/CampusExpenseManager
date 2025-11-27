@@ -9,6 +9,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,80 +75,96 @@ public class BudgetSetting extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
-        ibtHome.setOnClickListener(v -> {
-            startActivity(new Intent(BudgetSetting.this, MainActivity.class));
-            finish();
+        adapter.setOnItemClickListener(position -> {
+            BudgetItem item = list.get(position);
+            showAddEditDialog(item);
         });
-
-        ibtInfor.setOnClickListener(v -> startActivity(new Intent(BudgetSetting.this, Infor.class)));
 
         fabAdd.setOnClickListener(v -> showAddEditDialog(null));
 
-        adapter.setOnItemClickListener(position -> showAddEditDialog(list.get(position)));
+        ibtHome.setOnClickListener(v -> {
+            Intent intent = new Intent(BudgetSetting.this, MainActivity.class);
+            startActivity(intent);
+        });
+
+        ibtInfor.setOnClickListener(v -> {
+            Intent intent = new Intent(BudgetSetting.this, Infor.class);
+            startActivity(intent);
+        });
     }
 
     private void showAddEditDialog(BudgetItem item) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(item == null ? "Add Budget" : "Edit Budget");
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_edit, null);
+        builder.setView(dialogView);
 
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_edit, null);
-        EditText edtCategory = view.findViewById(R.id.edtEat);
-        EditText edtLimit = view.findViewById(R.id.edtMoney);
-        EditText edtDate = view.findViewById(R.id.edtDate);
+        EditText edtCategory = dialogView.findViewById(R.id.edtEat);  // Renamed to edtCategory
+        EditText edtLimit = dialogView.findViewById(R.id.edtMoney);
+        EditText edtDate = dialogView.findViewById(R.id.edtDate);
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM", Locale.getDefault());  // Changed to yyyy-MM
 
         if (item != null) {
+            builder.setTitle("Edit Budget");
             edtCategory.setText(item.getCategory());
             edtLimit.setText(String.valueOf(item.getLimitAmount()));
             edtDate.setText(item.getMonth());
+        } else {
+            builder.setTitle("Add Budget");
         }
 
         edtDate.setOnClickListener(v -> {
-            Calendar calendar = Calendar.getInstance();
-            DatePickerDialog dialog = new DatePickerDialog(this,
-                    (view1, year, month, dayOfMonth) -> {
-                        Calendar selected = Calendar.getInstance();
-                        selected.set(year, month, dayOfMonth);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
-                        edtDate.setText(sdf.format(selected.getTime()));
+            DatePickerDialog datePickerDialog = new DatePickerDialog(
+                    BudgetSetting.this,
+                    (view, year, month, dayOfMonth) -> {
+                        calendar.set(year, month, dayOfMonth);
+                        edtDate.setText(sdf.format(calendar.getTime()));  // Save as yyyy-MM
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH));
-            dialog.show();
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            );
+            datePickerDialog.show();
         });
 
-        builder.setView(view);
-
-        builder.setPositiveButton("Save", (dialog, which) -> {
+        builder.setPositiveButton(item == null ? "Add" : "Save", (dialog, which) -> {
             String category = edtCategory.getText().toString().trim();
             String limitStr = edtLimit.getText().toString().trim();
             String month = edtDate.getText().toString().trim();
 
             if (category.isEmpty() || limitStr.isEmpty() || month.isEmpty()) {
-                Toast.makeText(this, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
             int limitAmount;
             try {
                 limitAmount = Integer.parseInt(limitStr);
-            } catch (Exception e) {
-                Toast.makeText(this, "Invalid amount!", Toast.LENGTH_SHORT).show();
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Invalid amount", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Check if user already added budget for this month
-            if (item == null) {
-                long id = databaseHelper.addBudgetSetting(category, limitAmount, month, userId);
-                if (id != -1) {
-                    BudgetItem newItem = new BudgetItem((int) id, category, limitAmount, month);
-                    list.add(newItem);
-                    adapter.notifyItemInserted(list.size() - 1);
-                } else {
-                    Toast.makeText(this, "Add failed!", Toast.LENGTH_SHORT).show();
+            // === TỰ ĐỘNG TẠO DANH MỤC NẾU CHƯA TỒN TẠI ===
+            int categoryId = databaseHelper.getCategoryIdByName(category, userId);
+
+// Nếu chưa có → tự động tạo mới
+            if (categoryId == -1) {
+                categoryId = databaseHelper.addCategoryAndReturnId(userId, category);
+                if (categoryId == -1) {
+                    Toast.makeText(this, "Lỗi khi tạo danh mục mới!", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+            }
+// === KẾT THÚC TỰ ĐỘNG TẠO ===
+
+            if (item == null) {
+                databaseHelper.addBudgetSetting(userId, category, categoryId, limitAmount, month);
+                list.add(new BudgetItem(0, category, limitAmount, month));
+                adapter.notifyItemInserted(list.size() - 1);
             } else {
-                databaseHelper.updateBudgetSetting(item.getId(), category, limitAmount, month);
+                databaseHelper.updateBudgetSetting(item.getId(), category, categoryId, limitAmount, month);
                 item.setCategory(category);
                 item.setLimitAmount(limitAmount);
                 item.setMonth(month);
@@ -177,7 +198,7 @@ public class BudgetSetting extends AppCompatActivity {
         public BudgetAdapter(ArrayList<BudgetItem> list) { this.list = list; }
 
         @Override
-        public ViewHolder onCreateViewHolder(android.view.ViewGroup parent, int viewType) {
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_viewbudget, parent, false);
             return new ViewHolder(view);
         }
@@ -194,7 +215,7 @@ public class BudgetSetting extends AppCompatActivity {
         public int getItemCount() { return list.size(); }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            android.widget.TextView tvCategory, tvLimit, tvMonth;
+            TextView tvCategory, tvLimit, tvMonth;
             public ViewHolder(View itemView) {
                 super(itemView);
                 tvCategory = itemView.findViewById(R.id.tvSpendingsection);

@@ -7,36 +7,78 @@
     android:layout_height="match_parent"
     tools:context=".ExpenseReports">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/liner"
+    <TextView
+        android:id="@+id/tvTotalRemaining"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="#FFEB3B"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Remaining Budget: 0"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView5">
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Hai cột chọn báo cáo -->
+    <LinearLayout
+        android:id="@+id/llMonthSelector"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintTop_toBottomOf="@id/tvTotalRemaining"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="4dp">
+
+        <TextView
+            android:id="@+id/tvLastMonth"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/column_selector"
+            android:gravity="center"
+            android:text="Last Month"
+            android:textColor="#000"
+            tools:layout_editor_absoluteX="4dp"
+            tools:layout_editor_absoluteY="60dp" />
+
+        <TextView
+            android:id="@+id/tvThisMonth"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/column_selector"
+            android:gravity="center"
+            android:text="This Month"
+            android:textColor="#000"
+            tools:layout_editor_absoluteX="205dp"
+            tools:layout_editor_absoluteY="60dp" />
+    </LinearLayout>
+
+    <!-- Table chi tiết -->
+
+    <ScrollView
+        android:id="@+id/scrollTable"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/liner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/llMonthSelector"
+        app:layout_constraintVertical_bias="1.0">
 
         <TableLayout
-            android:id="@+id/tbExpenseReports"
+            android:id="@+id/tbReportDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="*"
-            android:padding="8dp">
-            <TextView
-                android:id="@+id/tvRemainingBudget"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:padding="8dp"
-                android:text="Remaining Budget: 0"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:background="#FFEB3B"
-                app:layout_constraintTop_toBottomOf="@+id/imageView5"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+            android:padding="8dp"
+            android:stretchColumns="*">
 
             <!-- Header -->
             <TableRow
@@ -45,41 +87,22 @@
 
                 <TextView
                     android:id="@+id/tvCategory"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:gravity="center"
-                    android:padding="4dp"
                     android:text="Category"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteY="132dp" />
 
                 <TextView
-                    android:id="@+id/tvAmount"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:id="@+id/tvAmountUsed"
                     android:gravity="center"
-                    android:padding="4dp"
                     android:text="Amount Used"
-                    android:textColor="#000000"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="200dp"
+                    tools:layout_editor_absoluteY="132dp" />
             </TableRow>
-
         </TableLayout>
     </ScrollView>
-
-    <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/pick" />
 
     <LinearLayout
         android:id="@+id/liner"
@@ -90,9 +113,7 @@
         android:weightSum="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintStart_toStartOf="parent">
 
         <ImageButton
             android:id="@+id/ibtHome"

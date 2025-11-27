@@ -87,7 +87,7 @@
             android:id="@+id/swtMode"
             android:layout_width="389dp"
             android:layout_height="78dp"
-            android:text="Light and Dark display mode" />
+            android:text="Display mode" />
     </LinearLayout>
 
     <Button

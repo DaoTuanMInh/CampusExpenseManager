@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class RegisterActivity extends AppCompatActivity {
     Button btnCreateAccount;
-    EditText edtRegisterUsername, edtRegisterPassword, edtRegisterEmail, edtRegisterPhonenumber;
+    EditText edtRegisterUsername, edtRegisterFullName,edtRegisterPassword, edtRegisterEmail, edtRegisterPhonenumber;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -20,19 +20,25 @@ public class RegisterActivity extends AppCompatActivity {
 
         btnCreateAccount = findViewById(R.id.btnCreateAccount);
         edtRegisterUsername = findViewById(R.id.edtRegisterUsername);
+        edtRegisterFullName = findViewById(R.id.edtRegisterFullName);
         edtRegisterPassword = findViewById(R.id.edtRegisterPassword);
         edtRegisterEmail = findViewById(R.id.edtRegisterEmail);
         edtRegisterPhonenumber = findViewById(R.id.edtRegisterPhonenumber);
 
         btnCreateAccount.setOnClickListener( v -> {
             String username = edtRegisterUsername.getText().toString();
+            String fullname = edtRegisterFullName.getText().toString();
             String password = edtRegisterPassword.getText().toString();
             String email = edtRegisterEmail.getText().toString();
             String phonenumber = edtRegisterPhonenumber.getText().toString().trim();
-            User user = new User(0, username, password, email, phonenumber);
+            User user = new User(0, username, fullname, password, email, phonenumber);
             try{
                 DatabaseHelper db = new DatabaseHelper(this);
                 long resultId = db.addUser(user);
+                if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
+                    Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if(resultId > 0){
                     Toast.makeText(this, "Create Account Success", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);

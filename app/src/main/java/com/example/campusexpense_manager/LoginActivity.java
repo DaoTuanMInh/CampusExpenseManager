@@ -6,14 +6,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
-    Button btnLogin, btnRegister;
+    Button btnLogin;
     EditText edtUsername, edtPassword;
+    TextView txtRegister;
     DatabaseHelper databaseHelper;
     SharedPreferences sharedPreferences;
 
@@ -29,11 +31,13 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences.Editor sharedPreferensesEditor = sharedPreferences.edit();
 
         btnLogin = findViewById(R.id.btnLogin);
-        btnRegister = findViewById(R.id.btnRegister);
         edtUsername = findViewById(R.id.edtUsername);
         edtPassword = findViewById(R.id.edtPassword);
+        txtRegister = findViewById(R.id.txtRegister);
 
-        btnRegister.setOnClickListener(v ->{
+
+
+        txtRegister.setOnClickListener(v ->{
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
         });

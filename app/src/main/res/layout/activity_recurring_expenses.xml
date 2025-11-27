@@ -19,6 +19,25 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/pick" />
 
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/liner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView6" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_input_add"
+        app:layout_constraintBottom_toTopOf="@id/liner"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:importantForAccessibility="no"/>
+
     <LinearLayout
         android:id="@+id/liner"
         android:layout_width="0dp"
@@ -59,12 +78,14 @@
 
     <TextView
         android:id="@+id/textView6"
-        android:layout_width="355dp"
-        android:layout_height="81dp"
+        android:layout_width="348dp"
+        android:layout_height="44dp"
         android:text="Recurring expenses"
         android:textSize="34sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.188" />
 </androidx.constraintlayout.widget.ConstraintLayout>

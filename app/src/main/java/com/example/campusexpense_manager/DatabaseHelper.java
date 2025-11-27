@@ -57,19 +57,12 @@ import java.util.Calendar;
     private static final String TABLE_EXPENSEREPORT_COLUM_TOTALEXPENSE = "totalexpens";
     private static final String TABLE_EXPENSEREPORT_COLUM_USER_ID = "user_id";
 
-    //Table Notifications
-    private static String TABLE_NOTIFICATIONS = "notifications";
-    private static final String TABLE_NOTIFICATION_COLUM_ID = "id";
-    private static final String TABLE_NOTIFICATION_COLUM_MESSAGE = "message";
-    private static final String TABLE_NOTIFICATION_COLUM_DATE = "date";
-    private static final String TABLE_NOTIFICATION_COLUM_USER_ID = "user_id";
-
-    //Table view_overrall_report
-    private static String TABLE_VIEWOVERALLREPORT = "view_overall_report";
-    private static final String TABLE_VIEWOVERALLREPORT_COLUM_ID = "id";
-    private static final String TABLE_VIEWOVERALLREPORT_TOTALUSERS = "totalusers";
-    private static final String TABLE_VIEWOVERALLREPORT_TOTALEXPENSE = "totalexpense";
-    private static final String TABLE_VIEWOVERALLREPORT_USER_ID = "user_id";
+//    //Table Notifications
+//    private static String TABLE_NOTIFICATIONS = "notifications";
+//    private static final String TABLE_NOTIFICATION_COLUM_ID = "id";
+//    private static final String TABLE_NOTIFICATION_COLUM_MESSAGE = "message";
+//    private static final String TABLE_NOTIFICATION_COLUM_DATE = "date";
+//    private static final String TABLE_NOTIFICATION_COLUM_USER_ID = "user_id";
 
     //Table expense_tracking
     private static String TABLE_EXPENSETRACKING = "expense_tracking";
@@ -89,6 +82,16 @@ import java.util.Calendar;
     private static final String TABLE_BUDGETSETTING_COLUM_MONTH = "month";
     private static final String TABLE_BUDGETSETTING_COLUM_USER_ID = "user_id";
     private static final String TABLE_BUDGETSETTING_COLUM_CATEGORY_ID = "category_id";
+
+        // New Table: recurring_expenses
+        private static String TABLE_RECURRING_EXPENSES = "recurring_expenses";
+        private static final String TABLE_RECURRING_COLUM_ID = "id";
+        private static final String TABLE_RECURRING_COLUM_CATEGORY = "category";
+        private static final String TABLE_RECURRING_COLUM_AMOUNT = "amount";
+        private static final String TABLE_RECURRING_COLUM_START_MONTH = "start_month";
+        private static final String TABLE_RECURRING_COLUM_END_MONTH = "end_month";
+        private static final String TABLE_RECURRING_COLUM_USER_ID = "user_id";
+        private static final String TABLE_RECURRING_COLUM_CATEGORY_ID = "category_id";
 
     @Override
     public void onConfigure(SQLiteDatabase db) {
@@ -136,19 +139,12 @@ import java.util.Calendar;
                     + TABLE_EXPENSEREPORT_COLUM_USER_ID + " INTEGER)";
             db.execSQL(CREATE_TABLE_EXPENSEREPORTS);
 
-            String CREATE_TABLE_NOTIFICATIONS = "CREATE TABLE " + TABLE_NOTIFICATIONS + "("
-                    + TABLE_NOTIFICATION_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                    + TABLE_NOTIFICATION_COLUM_MESSAGE + " TEXT, "
-                    + TABLE_NOTIFICATION_COLUM_DATE + " TEXT, "
-                    + TABLE_NOTIFICATION_COLUM_USER_ID + " INTEGER)";
-            db.execSQL(CREATE_TABLE_NOTIFICATIONS);
-
-        String CREATE_TABLE_VIEWOVERALLREPORT = "CREATE TABLE " + TABLE_VIEWOVERALLREPORT + "("
-                + TABLE_VIEWOVERALLREPORT_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + TABLE_VIEWOVERALLREPORT_TOTALUSERS + " INTEGER, "
-                + TABLE_VIEWOVERALLREPORT_TOTALEXPENSE + " INTEGER, "
-                + TABLE_VIEWOVERALLREPORT_USER_ID + " INTEGER)";
-        db.execSQL(CREATE_TABLE_VIEWOVERALLREPORT);
+//            String CREATE_TABLE_NOTIFICATIONS = "CREATE TABLE " + TABLE_NOTIFICATIONS + "("
+//                    + TABLE_NOTIFICATION_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                    + TABLE_NOTIFICATION_COLUM_MESSAGE + " TEXT, "
+//                    + TABLE_NOTIFICATION_COLUM_DATE + " TEXT, "
+//                    + TABLE_NOTIFICATION_COLUM_USER_ID + " INTEGER)";
+//            db.execSQL(CREATE_TABLE_NOTIFICATIONS);
 
             String CREATE_TABLE_EXPENSETRACKING = "CREATE TABLE " + TABLE_EXPENSETRACKING + "("
                     + TABLE_EXPENSETRACKING_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -168,6 +164,16 @@ import java.util.Calendar;
                     + TABLE_BUDGETSETTING_COLUM_USER_ID + " INTEGER, "
                     + TABLE_BUDGETSETTING_COLUM_CATEGORY_ID + " INTEGER)";
             db.execSQL(CREATE_TABLE_BUDGETSETTING);
+
+            String CREATE_TABLE_RECURRING_EXPENSES = "CREATE TABLE " + TABLE_RECURRING_EXPENSES + "("
+                    + TABLE_RECURRING_COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                    + TABLE_RECURRING_COLUM_CATEGORY + " TEXT, "
+                    + TABLE_RECURRING_COLUM_AMOUNT + " INTEGER, "
+                    + TABLE_RECURRING_COLUM_START_MONTH + " TEXT, "
+                    + TABLE_RECURRING_COLUM_END_MONTH + " TEXT, "
+                    + TABLE_RECURRING_COLUM_USER_ID + " INTEGER, "
+                    + TABLE_RECURRING_COLUM_CATEGORY_ID + " INTEGER)";
+            db.execSQL(CREATE_TABLE_RECURRING_EXPENSES);
         }
 
     @Override
@@ -177,13 +183,13 @@ import java.util.Calendar;
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_OVERVIEWOFEXPENSES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSEREPORTS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_VIEWOVERALLREPORT);
+//        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTIFICATIONS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_EXPENSETRACKING);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BUDGETSETTING);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECURRING_EXPENSES);
         onCreate(db);
     }
-
+//Long
     public long addUser(User user){
         SQLiteDatabase db  = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -249,7 +255,6 @@ import java.util.Calendar;
             cursor.close();
             return exists;
         }
-
         public boolean isEmailExists(String email) {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT 1 FROM users WHERE email = ?", new String[]{email});
@@ -257,7 +262,7 @@ import java.util.Calendar;
             cursor.close();
             return exists;
         }
-    //
+    //Minh
         public int getTotalRemaining(int userId, String yearMonth) {
             SQLiteDatabase db = this.getReadableDatabase();
 
@@ -338,7 +343,7 @@ import java.util.Calendar;
             });
         }
 
-        //
+        //Ánh
         public long addBudgetSetting(int userId, String category, int categoryId, int limitAmount, String month) {
             SQLiteDatabase db = this.getWritableDatabase();
             ContentValues values = new ContentValues();
@@ -416,6 +421,59 @@ import java.util.Calendar;
             cursor.close();
             return categoryId;
         }
+    // V.anh
+    public long addRecurringExpense(int userId, String category, int categoryId, int amount, String startMonth, String endMonth) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(TABLE_RECURRING_COLUM_USER_ID, userId);
+        values.put(TABLE_RECURRING_COLUM_CATEGORY, category);
+        values.put(TABLE_RECURRING_COLUM_CATEGORY_ID, categoryId);
+        values.put(TABLE_RECURRING_COLUM_AMOUNT, amount);
+        values.put(TABLE_RECURRING_COLUM_START_MONTH, startMonth);
+        values.put(TABLE_RECURRING_COLUM_END_MONTH, endMonth);
 
+        return db.insert(TABLE_RECURRING_EXPENSES, null, values);
+    }
 
+        public int updateRecurringExpense(int id, String category, int categoryId, int amount, String startMonth, String endMonth) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues values = new ContentValues();
+            values.put(TABLE_RECURRING_COLUM_CATEGORY, category);
+            values.put(TABLE_RECURRING_COLUM_CATEGORY_ID, categoryId);
+            values.put(TABLE_RECURRING_COLUM_AMOUNT, amount);
+            values.put(TABLE_RECURRING_COLUM_START_MONTH, startMonth);
+            values.put(TABLE_RECURRING_COLUM_END_MONTH, endMonth);
+
+            return db.update(TABLE_RECURRING_EXPENSES, values, TABLE_RECURRING_COLUM_ID + "=?", new String[]{String.valueOf(id)});
+        }
+
+        public int deleteRecurringExpense(int id) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            return db.delete(TABLE_RECURRING_EXPENSES, TABLE_RECURRING_COLUM_ID + "=?", new String[]{String.valueOf(id)});
+        }
+
+        public ArrayList<RecurringItem> getAllRecurringExpenses(int userId) {
+            ArrayList<RecurringItem> list = new ArrayList<>();
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            Cursor cursor = db.rawQuery(
+                    "SELECT id, category, amount, start_month, end_month FROM " + TABLE_RECURRING_EXPENSES + " WHERE user_id=?",
+                    new String[]{String.valueOf(userId)}
+            );
+
+            if (cursor.moveToFirst()) {
+                do {
+                    list.add(new RecurringItem(
+                            cursor.getInt(0),
+                            cursor.getString(1),
+                            cursor.getInt(2),
+                            cursor.getString(3),
+                            cursor.getString(4)
+                    ));
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+            return list;
+        }
 }

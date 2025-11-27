@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         ibtHome = findViewById(R.id.ibtHome);
         ibtInfor = findViewById(R.id.ibtInfor);
         ibtSetting = findViewById(R.id.ibtSetting);
-        ibtNotification = findViewById(R.id.ibtNotification);
         ibtExpenseReports = findViewById(R.id.ibtExpenseReports);
         ibtExpenseOverview = findViewById(R.id.ibtExpenseOverview);
         ibtExpenseTracking = findViewById(R.id.ibtExpenseTracking);
@@ -77,11 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
         ibtSetting.setOnClickListener(v->{
             Intent intent = new Intent(this, Setting.class);
-            startActivity(intent);
-        });
-
-        ibtNotification.setOnClickListener(v->{
-            Intent intent = new Intent(this, Notification.class);
             startActivity(intent);
         });
 

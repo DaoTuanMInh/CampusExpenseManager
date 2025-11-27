@@ -6,7 +6,6 @@
     android:padding="24dp"
     android:background="@android:color/white">
 
-    <!-- Category -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,14 +13,13 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtEat"
+            android:id="@+id/edtCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Category :"
+            android:hint="Category name :"
             android:inputType="textCapWords" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Limit Amount -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,24 +27,40 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtMoney"
+            android:id="@+id/edtAmount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Limit amount :"
+            android:hint="Monthly amount :"
             android:inputType="number" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Month -->
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edtStartMonth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Start month :"
+            android:focusable="false"
+            android:cursorVisible="false"
+            android:clickable="true"
+            android:importantForAccessibility="yes" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edtDate"
+            android:id="@+id/edtEndMonth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Month (yyyy-MM) :"
+            android:hint="End month :"
             android:focusable="false"
             android:cursorVisible="false"
             android:clickable="true"

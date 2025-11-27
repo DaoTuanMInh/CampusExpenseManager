@@ -197,8 +197,6 @@ import java.util.Calendar;
         return id;
     }
 
-
-
     public User getUserByUsernameAndPasword(String username, String password){
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_USER,
@@ -230,9 +228,7 @@ import java.util.Calendar;
                 new String[]{String.valueOf(id)},
                 null, null, null
         );
-
         User user = null;
-
         if (cursor.moveToFirst()) {
             user = new User(
                     cursor.getInt(0),
@@ -243,11 +239,25 @@ import java.util.Calendar;
                     cursor.getString(5)
             );
         }
-
         cursor.close();
         return user;
     }
+        public boolean isPhoneExists(String phone) {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT 1 FROM users WHERE phonenumber = ?", new String[]{phone});
+            boolean exists = cursor.getCount() > 0;
+            cursor.close();
+            return exists;
+        }
 
+        public boolean isEmailExists(String email) {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT 1 FROM users WHERE email = ?", new String[]{email});
+            boolean exists = cursor.getCount() > 0;
+            cursor.close();
+            return exists;
+        }
+    //
         public int getTotalRemaining(int userId, String yearMonth) {
             SQLiteDatabase db = this.getReadableDatabase();
 

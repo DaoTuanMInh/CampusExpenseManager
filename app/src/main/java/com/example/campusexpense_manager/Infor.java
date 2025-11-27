@@ -37,7 +37,6 @@ public class Infor extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences("AppData", MODE_PRIVATE);
         long userId = sharedPreferences.getLong("user_id", -1);
-
         showData((int) userId);
 
 

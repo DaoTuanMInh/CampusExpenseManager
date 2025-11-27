@@ -25,31 +25,44 @@ public class RegisterActivity extends AppCompatActivity {
         edtRegisterEmail = findViewById(R.id.edtRegisterEmail);
         edtRegisterPhonenumber = findViewById(R.id.edtRegisterPhonenumber);
 
-        btnCreateAccount.setOnClickListener( v -> {
-            String username = edtRegisterUsername.getText().toString();
-            String fullname = edtRegisterFullName.getText().toString();
-            String password = edtRegisterPassword.getText().toString();
-            String email = edtRegisterEmail.getText().toString();
+        btnCreateAccount.setOnClickListener(v -> {
+            String username = edtRegisterUsername.getText().toString().trim();
+            String fullname = edtRegisterFullName.getText().toString().trim();
+            String password = edtRegisterPassword.getText().toString().trim();
+            String email = edtRegisterEmail.getText().toString().trim().toLowerCase();
             String phonenumber = edtRegisterPhonenumber.getText().toString().trim();
+            if (username.isEmpty() || fullname.isEmpty() || password.isEmpty() || email.isEmpty() || phonenumber.isEmpty()) {
+                Toast.makeText(this, "Please fill in all fields!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!phonenumber.matches("\\d{10}")) {
+                Toast.makeText(this, "Phone number must contain exactly 10 digits!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!email.endsWith("@gmail.com") || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                Toast.makeText(this, "Please enter a valid Gmail address (example@gmail.com)", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            DatabaseHelper db = new DatabaseHelper(this);
+            if (db.isPhoneExists(phonenumber)) {
+                Toast.makeText(this, "This phone number is already registered!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (db.isEmailExists(email)) {
+                Toast.makeText(this, "This email is already in use!", Toast.LENGTH_SHORT).show();
+                return;
+            }
             User user = new User(0, username, fullname, password, email, phonenumber);
-            try{
-                DatabaseHelper db = new DatabaseHelper(this);
-                long resultId = db.addUser(user);
-                if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
-                    Toast.makeText(this, "Please fill all required fields", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if(resultId > 0){
-                    Toast.makeText(this, "Create Account Success", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(this, "Create Account failed", Toast.LENGTH_SHORT).show();
-                }
-            }catch (Exception e){
-                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            long resultId = db.addUser(user);
+
+            if (resultId > 0) {
+                Toast.makeText(this, "Account created successfully!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                startActivity(intent);
+                finish(); // Prevent going back to register screen
+            } else {
+                Toast.makeText(this, "Registration failed. Please try again!", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 }

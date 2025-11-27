@@ -46,13 +46,15 @@ public class LoginActivity extends AppCompatActivity {
                 User user = db.getUserByUsernameAndPasword(username, password);
                 if(user != null && user.getEmail() != null){
                     AppData.isLogin = true;
-                    sharedPreferensesEditor.putString("usernam", username);
-                    sharedPreferensesEditor.putString("emai", user.getEmail());
+                    sharedPreferensesEditor.putString("username", username);
+                    sharedPreferensesEditor.putString("email", user.getEmail());
                     sharedPreferensesEditor.putLong("user_id", user.getId());
                     sharedPreferensesEditor.putBoolean("isLogin", true);
                     sharedPreferensesEditor.apply();
                     Intent intent = new Intent(this, MainActivity.class);
                     startActivity(intent);
+                }else {
+                    Toast.makeText(this, "Wrong account or password!", Toast.LENGTH_SHORT).show();
                 }
             }catch (Exception e){
                 Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();

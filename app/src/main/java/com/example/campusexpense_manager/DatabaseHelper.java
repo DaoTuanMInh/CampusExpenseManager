@@ -220,31 +220,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return user;
     }
-    public User getUserByUsername(String username) {
+    public User getUserById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-
         Cursor cursor = db.query(
-                TABLE_USER,
-                null, // lấy tất cả cột
-                TABLE_USER_COLUM_USERNAME + "=?",
-                new String[]{username},
+                "users",
+                new String[]{"id", "username", "fullname", "password", "email", "phonenumber"},
+                "id = ?",
+                new String[]{String.valueOf(id)},
                 null, null, null
         );
 
-        if (cursor != null && cursor.moveToFirst()) {
-            User user = new User(
-                    cursor.getInt(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_ID)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_USERNAME)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_FULLNAME)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_PASSWORD)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_EMAIL)),
-                    cursor.getString(cursor.getColumnIndexOrThrow(TABLE_USER_COLUM_PHONENUMBER))
+        User user = null;
+
+        if (cursor.moveToFirst()) {
+            user = new User(
+                    cursor.getInt(0),
+                    cursor.getString(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getString(4),
+                    cursor.getString(5)
             );
-            cursor.close();
-            return user;
         }
 
-        return null;
+        cursor.close();
+        return user;
     }
     public Cursor getAllExpenseReports(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();

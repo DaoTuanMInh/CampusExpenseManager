@@ -71,20 +71,26 @@
         <TextView
             android:id="@+id/txtInforName"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
-            android:hint="Full Name" />
+            android:layout_height="57dp"
+            android:gravity="center|center_vertical"
+            android:hint="Full Name"
+            android:textSize="34sp" />
 
         <TextView
             android:id="@+id/txtInforEmail"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:hint="Email" />
+            android:layout_height="56dp"
+            android:gravity="center|center_vertical"
+            android:hint="Email"
+            android:textSize="34sp" />
 
         <TextView
             android:id="@+id/txtInforPhonenumber"
             android:layout_width="match_parent"
             android:layout_height="53dp"
-            android:hint="Phone Number" />
+            android:gravity="center|center_vertical"
+            android:hint="Phone Number"
+            android:textSize="34sp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

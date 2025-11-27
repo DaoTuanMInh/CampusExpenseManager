@@ -32,37 +32,38 @@ public class Infor extends AppCompatActivity {
         txtInforEmail = findViewById(R.id.txtInforEmail);
         txtInforPhonenumber = findViewById(R.id.txtInforPhonenumber);
 
-//        ibtHome.setSelected(false);
-//        ibtInfor.setSelected(true);
 
-//        ibtInfor.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                ibtHome.setSelected(false);
-//                ibtInfor.setSelected(true);
-//            }
-//        });
+        db = new DatabaseHelper(this);
+
+        sharedPreferences = getSharedPreferences("AppData", MODE_PRIVATE);
+        long userId = sharedPreferences.getLong("user_id", -1);
+
+        showData((int) userId);
+
+
         ibtHome.setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
         });
 
-        db = new DatabaseHelper(this);
 
-        sharedPreferences = getSharedPreferences("AppData", MODE_PRIVATE);
-        String username = sharedPreferences.getString("username", null);
+    }
+    private void showData(int userId) {
+        if (userId == -1) {
+            txtInforName.setText("Unknown user");
+            return;
+        }
 
-        if (username != null) {
-            User user = db.getUserByUsername(username);
+        User user = db.getUserById(userId);
 
-            if (user != null) {
-                txtInforName.setText(user.getFullname());
-                txtInforEmail.setText(user.getEmail());
-                txtInforPhonenumber.setText(user.getPhonenumber());
-            }
+        if (user != null) {
+            txtInforName.setText(user.getFullname());
+            txtInforEmail.setText(user.getEmail());
+            txtInforPhonenumber.setText(user.getPhonenumber());
+        } else {
+            txtInforName.setText("No data");
         }
     }
-
 
 
 }

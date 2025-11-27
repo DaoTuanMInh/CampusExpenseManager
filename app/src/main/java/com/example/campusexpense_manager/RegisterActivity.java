@@ -44,5 +44,6 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 }

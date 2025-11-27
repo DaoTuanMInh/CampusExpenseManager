@@ -20,12 +20,11 @@ import java.util.Calendar;
 
 public class ExpenseOverview extends AppCompatActivity {
     ImageButton ibtHome, ibtInfor;
-    TextView tvTotalRemaining, tvLastMonth, tvThisMonth;
-    TableLayout tbOverviewDetails;
+    TextView tvRemainingBudget;
+    TableLayout tbExpenseOverview;
+    DatabaseHelper dbHelper;
     int userId;
     SharedPreferences sharedPreferences;
-    DatabaseHelper dbHelper;
-    int currentMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,68 +46,70 @@ public class ExpenseOverview extends AppCompatActivity {
         });
 
         userId = (int) sharedPreferences.getLong("user_id", -1);
-        tvTotalRemaining = findViewById(R.id.tvTotalRemaining);
-        tvLastMonth = findViewById(R.id.tvLastMonth);
-        tvThisMonth = findViewById(R.id.tvThisMonth);
-        tbOverviewDetails = findViewById(R.id.tbOverviewDetails);
+        tvRemainingBudget = findViewById(R.id.tvRemainingBudget);
+        tbExpenseOverview = findViewById(R.id.tbExpenseOverview);
         ibtHome = findViewById(R.id.ibtHome);
         ibtInfor = findViewById(R.id.ibtInfor);
-
         dbHelper = new DatabaseHelper(this);
 
-        // Lấy tháng hiện tại
-        Calendar calendar = Calendar.getInstance();
-        currentMonth = calendar.get(Calendar.MONTH) + 1; // tháng từ 1-12
+        // Tùy chọn: Xóa chi tiêu cũ nếu test
+        // dbHelper.clearAllExpenses(); // Bỏ comment nếu muốn reset
 
-        // Hiển thị mặc định tháng này
-        loadMonth(currentMonth);
+        // Load tháng hiện tại
+        Calendar cal = Calendar.getInstance();
+        String yearMonth = cal.get(Calendar.YEAR) + "-" + String.format("%02d", cal.get(Calendar.MONTH) + 1);
+        loadExpenses(userId, yearMonth);
 
-        // Click sự kiện cho LastMonth
-        tvLastMonth.setOnClickListener(v -> {
-            int lastMonth = currentMonth - 1;
-            if (lastMonth <= 0) lastMonth = 12;
-            loadMonth(lastMonth);
+        ibtHome.setOnClickListener(v -> {
+            Intent intent = new Intent(ExpenseOverview.this, MainActivity.class);
+            startActivity(intent);
         });
 
-        // Click sự kiện cho ThisMonth
-        tvThisMonth.setOnClickListener(v -> loadMonth(currentMonth));
-
-        ibtHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ExpenseOverview.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-        ibtInfor.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(ExpenseOverview.this, Infor.class);
-                startActivity(intent);
-            }
+        ibtInfor.setOnClickListener(v -> {
+            Intent intent = new Intent(ExpenseOverview.this, Infor.class);
+            startActivity(intent);
         });
     }
-    private void loadMonth(int month) {
-        int remaining = dbHelper.getTotalRemaining(userId, month);
-        tvTotalRemaining.setText("Remaining Budget: " + remaining);
 
-        tbOverviewDetails.removeViews(1, tbOverviewDetails.getChildCount() - 1);
+    private void loadExpenses(int userId, String yearMonth) {
+        // Cập nhật tổng Remaining Budget ban đầu
+        int totalRemaining = dbHelper.getTotalRemaining(userId, yearMonth);
+        tvRemainingBudget.setText("Remaining Budget: " + totalRemaining);
 
-        Cursor cursor = dbHelper.getExpenseDetailsByMonth(userId, month);
-        while (cursor.moveToNext()) {
-            String category = cursor.getString(cursor.getColumnIndexOrThrow("category"));
-            int amountUsed = cursor.getInt(cursor.getColumnIndexOrThrow("amount_used"));
-
-            TableRow row = (TableRow) getLayoutInflater().inflate(R.layout.expense_row, tbOverviewDetails, false);
-
-            TextView tvCategory = row.findViewById(R.id.tvCategoryRow);
-            TextView tvAmount = row.findViewById(R.id.tvAmountRow);
-
-            tvCategory.setText(category);
-            tvAmount.setText(String.valueOf(amountUsed));
-
-            tbOverviewDetails.addView(row);
+        // Xóa dữ liệu cũ (giữ header nếu có)
+        while (tbExpenseOverview.getChildCount() > 1) {
+            tbExpenseOverview.removeViewAt(1);
         }
-        cursor.close();
-    }
 
+        Cursor cursor = dbHelper.getExpenseOverviewByYearMonth(userId, yearMonth);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                String category = cursor.getString(cursor.getColumnIndexOrThrow("category"));
+                int amountUsed = cursor.getInt(cursor.getColumnIndexOrThrow("amount_used"));
+                int budgetLimit = cursor.getInt(cursor.getColumnIndexOrThrow("budget_limit"));
+                int remaining = cursor.getInt(cursor.getColumnIndexOrThrow("remaining"));
+
+                TableRow row = (TableRow) getLayoutInflater().inflate(R.layout.table_row_expense, null, false);
+
+                TextView tvCategory = row.findViewById(R.id.tvCategoryRow);
+                TextView tvAmount = row.findViewById(R.id.tvAmountRow);
+                TextView tvLimit = row.findViewById(R.id.tvLimitRow);      // Mới thêm
+                TextView tvRemaining = row.findViewById(R.id.tvRemainingRow); // Mới thêm
+
+                tvCategory.setText(category);
+                tvAmount.setText(String.valueOf(amountUsed));
+                tvLimit.setText(String.valueOf(budgetLimit));
+                tvRemaining.setText(String.valueOf(remaining));
+
+                // Click row để update tvRemainingBudget với remaining của category
+                row.setOnClickListener(v -> tvRemainingBudget.setText("Remaining for " + category + ": " + remaining));
+
+                tbExpenseOverview.addView(row);
+
+            } while (cursor.moveToNext());
+
+            cursor.close();
+        }
+    }
 }

@@ -6,29 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!-- Mục chi tiêu -->
+    <!-- Category -->
     <EditText
         android:id="@+id/edtEat"
-        android:layout_width="386dp"
-        android:layout_height="71dp"
-        android:hint="Spending section"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:hint="Category"
         android:inputType="textPersonName" />
 
-    <!-- Số tiền -->
+    <!-- Limit Amount -->
     <EditText
         android:id="@+id/edtMoney"
-        android:layout_width="386dp"
-        android:layout_height="87dp"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
         android:layout_marginTop="8dp"
-        android:hint="Money:"
+        android:hint="Limit Amount"
         android:inputType="number" />
 
-    <!-- Ngày chi tiêu -->
+    <!-- Month -->
     <EditText
         android:id="@+id/edtDate"
-        android:layout_width="386dp"
-        android:layout_height="70dp"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
         android:layout_marginTop="8dp"
         android:focusable="false"
-        android:hint="Date:" />
+        android:hint="Month (yyyy-MM)" />
 </LinearLayout>

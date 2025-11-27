@@ -7,100 +7,93 @@
     android:layout_height="match_parent"
     tools:context=".ExpenseOverview">
 
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/pick" />
+
     <TextView
-        android:id="@+id/tvTotalRemaining"
+        android:id="@+id/tvRemainingBudget"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="#FFEB3B"
-        android:gravity="center"
+        android:layout_margin="8dp"
         android:padding="8dp"
         android:text="Remaining Budget: 0"
-        android:textSize="18sp"
+        android:textColor="#000000"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:gravity="center"
+        android:background="#FFEB3B"
+        app:layout_constraintTop_toBottomOf="@+id/imageView5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Hai cột chọn báo cáo -->
-    <LinearLayout
-        android:id="@+id/llMonthSelector"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        app:layout_constraintTop_toBottomOf="@id/tvTotalRemaining"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:padding="4dp">
-
-        <TextView
-            android:id="@+id/tvLastMonth"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/column_selector"
-            android:gravity="center"
-            android:text="Last Month"
-            android:textColor="#000"
-            tools:layout_editor_absoluteX="4dp"
-            tools:layout_editor_absoluteY="60dp" />
-
-        <TextView
-            android:id="@+id/tvThisMonth"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/column_selector"
-            android:gravity="center"
-            android:text="This Month"
-            android:textColor="#000"
-            tools:layout_editor_absoluteX="205dp"
-            tools:layout_editor_absoluteY="60dp" />
-    </LinearLayout>
-
-    <!-- Table chi tiết -->
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <ScrollView
-        android:id="@+id/scrollTable"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/liner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/tvRemainingBudget"
+        app:layout_constraintBottom_toTopOf="@+id/liner"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/llMonthSelector"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TableLayout
-            android:id="@+id/tbOverviewDetails"
+            android:id="@+id/tbExpenseOverview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:stretchColumns="*">
+            android:stretchColumns="*"
+            android:padding="8dp">
 
-            <!-- Header -->
+            <!-- Header Row -->
             <TableRow
                 android:background="#E0E0E0"
                 android:padding="8dp">
 
                 <TextView
-                    android:id="@+id/tvCategory"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:gravity="center"
+                    android:padding="4dp"
                     android:text="Category"
-                    android:textStyle="bold"
-                    tools:layout_editor_absoluteX="16dp"
-                    tools:layout_editor_absoluteY="132dp" />
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/tvAmountUsed"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:gravity="center"
+                    android:padding="4dp"
                     android:text="Amount Used"
-                    android:textStyle="bold"
-                    tools:layout_editor_absoluteX="200dp"
-                    tools:layout_editor_absoluteY="132dp" />
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:text="Limit"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="4dp"
+                    android:text="Remaining"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
             </TableRow>
+
         </TableLayout>
     </ScrollView>
 
@@ -112,8 +105,8 @@
         android:orientation="horizontal"
         android:weightSum="2"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <ImageButton
             android:id="@+id/ibtHome"
@@ -121,9 +114,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/drawable"
-            android:clickable="true"
-            android:contentDescription="Home"
-            android:focusable="true"
+            android:contentDescription="Go to Home"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/outline_home_24" />
 
@@ -133,11 +124,10 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@drawable/drawable"
-            android:clickable="true"
-            android:contentDescription="Infor"
-            android:focusable="true"
             android:scaleType="fitCenter"
+            android:contentDescription="Go to Ìnor"
             app:srcCompat="@drawable/outline_account_circle_24" />
     </LinearLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,20 +2,39 @@
 <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="4dp">
+    android:padding="12dp">
 
     <TextView
         android:id="@+id/tvCategoryRow"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center" />
+        android:gravity="start"
+        android:padding="4dp"
+        android:textColor="#000000" />
 
     <TextView
         android:id="@+id/tvAmountRow"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center" />
+        android:gravity="end"
+        android:padding="4dp"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/tvLimitRow"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:padding="4dp"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/tvRemainingRow"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:padding="4dp"
+        android:textColor="#000000"
+        android:textStyle="bold" />
 
 </TableRow>

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,11 +13,18 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.Calendar;
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
-    ImageButton ibtHome, ibtInfor, ibtSetting, ibtNotification, ibtExpenseReports, ibtExpenseOverview, ibtExpenseTracking, ibtBudgetSetting, ibtRecurringExpenses;
+    ImageButton ibtHome, ibtInfor, ibtSetting,
+            ibtExpenseReports, ibtExpenseOverview,
+            ibtExpenseTracking, ibtBudgetSetting, ibtRecurringExpenses;
+    TextView txExpense, txBudget;
     SharedPreferences sharedPreferences;
-
+    DatabaseHelper dbHelper;
+    int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
 
         sharedPreferences = getSharedPreferences("AppData", MODE_PRIVATE);
+        userId = (int) sharedPreferences.getLong("user_id", -1);
 
         if (!sharedPreferences.getBoolean("isLogin", false)) {
             Intent intent = new Intent(this, LoginActivity.class);
@@ -39,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        dbHelper = new DatabaseHelper(this);
+
         ibtBudgetSetting = findViewById(R.id.ibtBudgetSetting);
         ibtRecurringExpenses = findViewById(R.id.ibtRecurringExpenses);
         ibtHome = findViewById(R.id.ibtHome);
@@ -47,10 +58,24 @@ public class MainActivity extends AppCompatActivity {
         ibtExpenseReports = findViewById(R.id.ibtExpenseReports);
         ibtExpenseOverview = findViewById(R.id.ibtExpenseOverview);
         ibtExpenseTracking = findViewById(R.id.ibtExpenseTracking);
+        txExpense = findViewById(R.id.txExpense);
+        txBudget = findViewById(R.id.txBudget);
 
         // Trang Home là trang chính → nút Home mặc định được chọn
         ibtHome.setSelected(true);
         ibtInfor.setSelected(false);
+
+        // Áp dụng ngân sách định kỳ
+        dbHelper.applyRecurringToExpenseTracking(userId);
+
+        // Tính và hiển thị tổng chi tiêu và tổng ngân sách cho tháng hiện tại
+        Calendar cal = Calendar.getInstance();
+        String yearMonth = String.format(Locale.getDefault(), "%d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
+        int totalExpense = dbHelper.getTotalExpenseForMonth(userId, yearMonth);
+        int totalBudget = dbHelper.getTotalBudgetForMonth(userId, yearMonth);
+
+        txExpense.setText("Total expenses: " + totalExpense);
+        txBudget.setText("Total budget: " + totalBudget);
 
         // Bấm Home
         ibtHome.setOnClickListener(new View.OnClickListener() {
@@ -94,5 +119,19 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, ExpenseTracking.class);
             startActivity(intent);
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Cập nhật lại tổng khi quay lại màn hình
+        dbHelper.applyRecurringToExpenseTracking(userId);
+        Calendar cal = Calendar.getInstance();
+        String yearMonth = String.format(Locale.getDefault(), "%d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
+        int totalExpense = dbHelper.getTotalExpenseForMonth(userId, yearMonth);
+        int totalBudget = dbHelper.getTotalBudgetForMonth(userId, yearMonth);
+
+        txExpense.setText("Total expenses: " + totalExpense);
+        txBudget.setText("Total budget: " + totalBudget);
     }
 }

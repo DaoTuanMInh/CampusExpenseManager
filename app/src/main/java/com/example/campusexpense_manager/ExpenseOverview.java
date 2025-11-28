@@ -72,9 +72,6 @@ public class ExpenseOverview extends AppCompatActivity {
     }
 
     private void loadExpenses(int userId, String yearMonth) {
-        // Cập nhật tổng Remaining Budget ban đầu
-        int totalRemaining = dbHelper.getTotalRemaining(userId, yearMonth);
-        tvRemainingBudget.setText("Remaining Budget: " + totalRemaining);
 
         // Xóa dữ liệu cũ (giữ header nếu có)
         while (tbExpenseOverview.getChildCount() > 1) {
@@ -94,16 +91,18 @@ public class ExpenseOverview extends AppCompatActivity {
 
                 TextView tvCategory = row.findViewById(R.id.tvCategoryRow);
                 TextView tvAmount = row.findViewById(R.id.tvAmountRow);
-                TextView tvLimit = row.findViewById(R.id.tvLimitRow);      // Mới thêm
-                TextView tvRemaining = row.findViewById(R.id.tvRemainingRow); // Mới thêm
+                TextView tvLimit = row.findViewById(R.id.tvLimitRow);
+                TextView tvRemaining = row.findViewById(R.id.tvRemainingRow);
 
                 tvCategory.setText(category);
                 tvAmount.setText(String.valueOf(amountUsed));
                 tvLimit.setText(String.valueOf(budgetLimit));
                 tvRemaining.setText(String.valueOf(remaining));
 
-                // Click row để update tvRemainingBudget với remaining của category
-                row.setOnClickListener(v -> tvRemainingBudget.setText("Remaining for " + category + ": " + remaining));
+                // Khi click vào row mới cập nhật Remaining Budget
+                row.setOnClickListener(v ->
+                        tvRemainingBudget.setText("Remaining for " + category + ": " + remaining)
+                );
 
                 tbExpenseOverview.addView(row);
 
@@ -112,4 +111,5 @@ public class ExpenseOverview extends AppCompatActivity {
             cursor.close();
         }
     }
+
 }

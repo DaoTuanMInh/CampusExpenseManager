@@ -31,12 +31,15 @@ public class ExpenseReports extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         sharedPreferences = getSharedPreferences("AppData", MODE_PRIVATE);
 
+        userId = (int) sharedPreferences.getLong("user_id", -1);
+
         if (!sharedPreferences.getBoolean("isLogin", false)) {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
             return;
         }
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_expense_reports);
@@ -46,7 +49,7 @@ public class ExpenseReports extends AppCompatActivity {
             return insets;
         });
 
-        userId = (int) sharedPreferences.getLong("user_id", -1);
+
         tvTotalRemaining = findViewById(R.id.tvTotalRemaining);
         tvLastMonth = findViewById(R.id.tvLastMonth);
         tvThisMonth = findViewById(R.id.tvThisMonth);
@@ -59,6 +62,8 @@ public class ExpenseReports extends AppCompatActivity {
         // Lấy tháng hiện tại
         Calendar calendar = Calendar.getInstance();
         currentMonth = calendar.get(Calendar.MONTH) + 1; // tháng từ 1-12
+
+        dbHelper.applyRecurringToExpenseTracking(userId);
 
         // Hiển thị mặc định tháng này
         loadMonth(currentMonth);
@@ -104,12 +109,12 @@ public class ExpenseReports extends AppCompatActivity {
         tvTotalRemaining.setText("Remaining Budget: " + remaining);
 
         // Xóa các row cũ
+        // Xóa các row cũ
         tbReportDetails.removeViews(1, tbReportDetails.getChildCount() - 1);
 
-        // Lấy danh sách category có budget trong tháng
         Cursor cursor = dbHelper.getExpenseDetailsByYearMonth(userId, yearMonth);
 
-        if (cursor.getCount() == 0) {
+        if (cursor == null || cursor.getCount() == 0) {
             // Không có dữ liệu -> hiển thị row thông báo
             TableRow row = (TableRow) getLayoutInflater().inflate(R.layout.expense_row, tbReportDetails, false);
             TextView tvCategory = row.findViewById(R.id.tvCategoryRow);
@@ -117,8 +122,8 @@ public class ExpenseReports extends AppCompatActivity {
             tvCategory.setText("No data");
             tvAmount.setText("-");
             tbReportDetails.addView(row);
-        } else {
-            while (cursor.moveToNext()) {
+        } else if (cursor.moveToFirst()) {
+            do {
                 String category = cursor.getString(cursor.getColumnIndexOrThrow("category"));
                 int amountUsed = cursor.getInt(cursor.getColumnIndexOrThrow("amount_used"));
 
@@ -130,9 +135,9 @@ public class ExpenseReports extends AppCompatActivity {
                 tvAmount.setText(String.valueOf(amountUsed));
 
                 tbReportDetails.addView(row);
-            }
+            } while (cursor.moveToNext());
         }
-        cursor.close();
+        if (cursor != null) cursor.close();
     }
 
 

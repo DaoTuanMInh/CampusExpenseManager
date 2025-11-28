@@ -30,6 +30,8 @@ public class ExpenseOverview extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         sharedPreferences = getSharedPreferences("AppData", MODE_PRIVATE);
 
+        userId = (int) sharedPreferences.getLong("user_id", -1);
+
         if (!sharedPreferences.getBoolean("isLogin",false)){
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
@@ -45,17 +47,15 @@ public class ExpenseOverview extends AppCompatActivity {
             return insets;
         });
 
-        userId = (int) sharedPreferences.getLong("user_id", -1);
+
         tvRemainingBudget = findViewById(R.id.tvRemainingBudget);
         tbExpenseOverview = findViewById(R.id.tbExpenseOverview);
         ibtHome = findViewById(R.id.ibtHome);
         ibtInfor = findViewById(R.id.ibtInfor);
         dbHelper = new DatabaseHelper(this);
 
-        // Tùy chọn: Xóa chi tiêu cũ nếu test
-        // dbHelper.clearAllExpenses(); // Bỏ comment nếu muốn reset
+        dbHelper.applyRecurringToExpenseTracking(userId);
 
-        // Load tháng hiện tại
         Calendar cal = Calendar.getInstance();
         String yearMonth = cal.get(Calendar.YEAR) + "-" + String.format("%02d", cal.get(Calendar.MONTH) + 1);
         loadExpenses(userId, yearMonth);

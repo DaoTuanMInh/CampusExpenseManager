@@ -20,17 +20,18 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        sharedPreferences = getSharedPreferences("AppData", MODE_PRIVATE);
-
-        if (!sharedPreferences.getBoolean("isLogin",false)){
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
-
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
 
+        sharedPreferences = getSharedPreferences("AppData", MODE_PRIVATE);
+
+        if (!sharedPreferences.getBoolean("isLogin", false)) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+        setContentView(R.layout.activity_main);
         // EdgeToEdge padding
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

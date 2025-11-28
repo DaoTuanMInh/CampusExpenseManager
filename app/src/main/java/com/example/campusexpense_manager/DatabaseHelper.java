@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import java.util.Calendar;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
     import androidx.annotation.Nullable;
 
@@ -265,84 +268,215 @@ import java.util.Calendar;
     //Minh
         public int getTotalRemaining(int userId, String yearMonth) {
             SQLiteDatabase db = this.getReadableDatabase();
+            String sql = "SELECT COALESCE(SUM(b.limitamount),0) - COALESCE(SUM(e.amount),0)\n" +
+                    "        FROM categories c\n" +
+                    "        LEFT JOIN budget_setting b ON c.id = b.category_id AND b.user_id = ? AND substr(b.month,1,7) = ?\n" +
+                    "        LEFT JOIN expense_tracking e ON c.id = e.category_id AND e.user_id = ? AND substr(e.date,1,7) = ?\n" +
+                    "        WHERE c.user_id = ?";
 
-
-            int totalBudget = 0;
-            int totalSpent = 0;
-
-            // 1. Lấy tổng limitamount từ bảng budget_setting theo user_id và tháng (yyyy-MM)
-            String sqlBudget = "SELECT IFNULL(SUM(limitamount), 0) AS total_budget " +
-                    "FROM budget_setting " +
-                    "WHERE user_id = ? AND month = ?";
-
-            try (Cursor cursorBudget = db.rawQuery(sqlBudget, new String[]{String.valueOf(userId), yearMonth})) {
-                if (cursorBudget.moveToFirst()) {
-                    totalBudget = cursorBudget.getInt(cursorBudget.getColumnIndexOrThrow("total_budget"));
-                }
-            } // Cursor tự đóng nhờ try-with-resources
-
-            // 2. Lấy tổng chi tiêu thực tế từ expense_tracking theo user_id và tháng
-            String sqlSpent = "SELECT IFNULL(SUM(amount), 0) AS total_spent " +
-                    "FROM expense_tracking " +
-                    "WHERE user_id = ? AND strftime('%Y-%m', date) = ?";
-
-            try (Cursor cursorSpent = db.rawQuery(sqlSpent, new String[]{String.valueOf(userId), yearMonth})) {
-                if (cursorSpent.moveToFirst()) {
-                    totalSpent = cursorSpent.getInt(cursorSpent.getColumnIndexOrThrow("total_spent"));
-                }
-            }
-
-            return totalBudget - totalSpent;
+            Cursor c = db.rawQuery(sql, new String[]{
+                    String.valueOf(userId), yearMonth, String.valueOf(userId), yearMonth, String.valueOf(userId)
+            });
+            int result = c.moveToFirst() ? c.getInt(0) : 0;
+            c.close();
+            return result;
         }
         public Cursor getExpenseDetailsByYearMonth(int userId, String yearMonth) {
             SQLiteDatabase db = this.getReadableDatabase();
 
-            String query = "SELECT c.categoryname AS category, " +
-                    "IFNULL(SUM(et.amount), 0) AS amount_used " +
-                    "FROM categories c " +
-                    "JOIN budget_setting bs ON bs.category_id = c.id AND bs.user_id = ? AND bs.month = ? " +
-                    "LEFT JOIN expense_tracking et ON et.category_id = c.id " +
-                    "AND et.user_id = ? " +
-                    "AND strftime('%Y-%m', et.date) = ? " +
-                    "WHERE c.user_id = ? " +
-                    "GROUP BY c.id, c.categoryname " +
-                    "ORDER BY amount_used DESC";
+            String sql = "SELECT c.categoryname AS category, COALESCE(SUM(e.amount),0) AS amount_used\n" +
+                    "        FROM categories c\n" +
+                    "        LEFT JOIN expense_tracking e ON c.id = e.category_id AND e.user_id = ? AND substr(e.date,1,7) = ?\n" +
+                    "        WHERE c.user_id = ?\n" +
+                    "        GROUP BY c.id HAVING amount_used > 0\n" +
+                    "        ORDER BY amount_used DESC";
 
-            return db.rawQuery(query, new String[]{
-                    String.valueOf(userId),
-                    yearMonth,
-                    String.valueOf(userId),
-                    yearMonth,
-                    String.valueOf(userId)
-            });
+            return db.rawQuery(sql, new String[]{String.valueOf(userId), yearMonth, String.valueOf(userId)});
         }
         public Cursor getExpenseOverviewByYearMonth(int userId, String yearMonth) {
             SQLiteDatabase db = this.getReadableDatabase();
 
-            String sql ="SELECT c.categoryname AS category,\n" +
-                    "            IFNULL(SUM(et.amount), 0) AS amount_used,\n" +
-                    "            IFNULL(bs.limitamount, 0) AS budget_limit,\n" +
-                    "            (IFNULL(bs.limitamount, 0) - IFNULL(SUM(et.amount), 0)) AS remaining\n" +
+            String sql = "SELECT c.categoryname AS category,\n" +
+                    "            COALESCE(SUM(e.amount), 0) AS amount_used,\n" +
+                    "            COALESCE(b.limitamount, 0) AS budget_limit,\n" +
+                    "            COALESCE(b.limitamount, 0) - COALESCE(SUM(e.amount), 0) AS remaining\n" +
                     "        FROM categories c\n" +
-                    "        LEFT JOIN budget_setting bs \n" +
-                    "            ON bs.category = c.categoryname \n" +
-                    "            AND bs.user_id = ? \n" +
-                    "            AND bs.month = ?\n" +
-                    "        LEFT JOIN expense_tracking et \n" +
-                    "            ON et.category_id = c.id \n" +
-                    "            AND et.user_id = ?\n" +
-                    "            AND strftime('%Y-%m', et.date) = ?\n" +
+                    "        LEFT JOIN expense_tracking e ON c.id = e.category_id AND e.user_id = ? AND substr(e.date,1,7) = ?\n" +
+                    "        LEFT JOIN budget_setting b ON c.id = b.category_id AND b.user_id = ? AND substr(b.month,1,7) = ?\n" +
                     "        WHERE c.user_id = ?\n" +
                     "        GROUP BY c.id, c.categoryname\n" +
-                    "        ORDER BY remaining ASC";
-
+                    "        HAVING amount_used > 0 OR budget_limit > 0\n" +
+                    "        ORDER BY c.categoryname";
             return db.rawQuery(sql, new String[]{
                     String.valueOf(userId), yearMonth,
                     String.valueOf(userId), yearMonth,
                     String.valueOf(userId)
             });
         }
+        // Áp dụng recurring cho một tháng cụ thể (thêm vào expense_tracking nếu chưa có)
+        public void applyRecurringForMonth(int userId, String yearMonth) {
+            SQLiteDatabase db = this.getWritableDatabase();
 
+            // Lấy tất cả recurring áp dụng cho tháng này
+            String query = "SELECT id, category, category_id, amount, start_month, end_month " +
+                    "FROM " + TABLE_RECURRING_EXPENSES +
+                    " WHERE user_id = ? AND start_month <= ? " +
+                    "AND (end_month IS NULL OR end_month >= ?)";
+
+            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId), yearMonth, yearMonth});
+
+            while (cursor.moveToNext()) {
+                int recurringId = cursor.getInt(0);
+                String category = cursor.getString(1);
+                int categoryId = cursor.getInt(2);
+                int amount = cursor.getInt(3);
+                String startMonth = cursor.getString(4);
+                String endMonth = cursor.getString(5); // có thể null
+
+                // Kiểm tra xem đã áp dụng cho tháng này chưa (tìm expense với description="Recurring [recurringId]", date=yearMonth + "-01")
+                String checkQuery = "SELECT id FROM " + TABLE_EXPENSETRACKING +
+                        " WHERE user_id = ? AND category_id = ? AND amount = ? " +
+                        " AND date LIKE ? AND description = ?";
+
+                String expenseDate = yearMonth + "-01"; // ngày đầu tháng
+                String description = "Recurring #" + recurringId; // unique để tránh trùng
+
+                Cursor checkCursor = db.rawQuery(checkQuery, new String[]{
+                        String.valueOf(userId), String.valueOf(categoryId), String.valueOf(amount),
+                        expenseDate + "%", description
+                });
+
+                if (checkCursor.getCount() == 0) {
+                    // Chưa có → thêm vào expense_tracking
+                    ContentValues cv = new ContentValues();
+                    cv.put(TABLE_EXPENSETRACKING_COLUM_USER_ID, userId);
+                    cv.put(TABLE_EXPENSETRACKING_COLUM_CATEGORY, category);
+                    cv.put(TABLE_EXPENSETRACKING_COLUM_CATEGORY_ID, categoryId);
+                    cv.put(TABLE_EXPENSETRACKING_COLUM_AMOUNT, amount);
+                    cv.put(TABLE_EXPENSETRACKING_COLUM_DATE, expenseDate);
+                    cv.put(TABLE_EXPENSETRACKING_COLUM_DESCRIPTION, description);
+
+                    db.insert(TABLE_EXPENSETRACKING, null, cv);
+                }
+                checkCursor.close();
+            }
+            cursor.close();
+        }
+        // Áp dụng tất cả recurring expenses cho tháng hiện tại và tương lai (nếu cần)
+        public void applyAllRecurringExpenses(int userId) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            Calendar cal = Calendar.getInstance();
+            String currentYearMonth = cal.get(Calendar.YEAR) + "-" + String.format("%02d", cal.get(Calendar.MONTH) + 1);
+
+            String query = "SELECT id, category, category_id, amount, start_month, end_month " +
+                    "FROM recurring_expenses WHERE user_id = ?";
+
+            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+
+            while (cursor.moveToNext()) {
+                int recId = cursor.getInt(0);
+                String category = cursor.getString(1);
+                int catId = cursor.getInt(2);
+                int amount = cursor.getInt(3);
+                String start = cursor.getString(4);
+                String end = cursor.getString(5); // có thể null
+
+                // Duyệt từng tháng từ start đến hiện tại (và tương lai nếu end null)
+                Calendar tempCal = Calendar.getInstance();
+                String[] startParts = start.split("-");
+                tempCal.set(Integer.parseInt(startParts[0]), Integer.parseInt(startParts[1]) - 1, 1);
+
+                while (!tempCal.after(Calendar.getInstance())) {
+                    String monthStr = tempCal.get(Calendar.YEAR) + "-" + String.format("%02d", tempCal.get(Calendar.MONTH) + 1);
+
+                    // Bỏ qua nếu chưa tới start hoặc đã qua end
+                    if (monthStr.compareTo(start) < 0 || (end != null && monthStr.compareTo(end) > 0)) {
+                        tempCal.add(Calendar.MONTH, 1);
+                        continue;
+                    }
+
+                    // Kiểm tra đã tồn tại expense này chưa
+                    String check = "SELECT id FROM expense_tracking WHERE user_id = ? AND category_id = ? AND amount = ? " +
+                            "AND date LIKE ? AND description LIKE ?";
+                    Cursor exist = db.rawQuery(check, new String[]{
+                            String.valueOf(userId), String.valueOf(catId), String.valueOf(amount),
+                            monthStr + "%", "Recurring #%"
+                    });
+
+                    if (exist.getCount() == 0) {
+                        ContentValues cv = new ContentValues();
+                        cv.put("user_id", userId);
+                        cv.put("category", category);
+                        cv.put("category_id", catId);
+                        cv.put("amount", amount);
+                        cv.put("date", monthStr + "-01");
+                        cv.put("description", "Recurring #" + recId);
+                        db.insert("expense_tracking", null, cv);
+                    }
+                    exist.close();
+
+                    tempCal.add(Calendar.MONTH, 1);
+                }
+            }
+            cursor.close();
+        }
+
+        public void applyRecurringToExpenseTracking(int userId) {
+            if (userId <= 0) return;
+
+            SQLiteDatabase db = this.getWritableDatabase();
+            String sql = "SELECT id, category, category_id, amount, start_month, end_month " +
+                    "FROM recurring_expenses WHERE user_id = ?";
+
+            Cursor cursor = null;
+            try {
+                cursor = db.rawQuery(sql, new String[]{String.valueOf(userId)});
+                Calendar now = Calendar.getInstance();
+
+                while (cursor != null && cursor.moveToNext()) {
+                    int recId = cursor.getInt(0);
+                    String category = cursor.getString(1);
+                    int catId = cursor.getInt(2);
+                    int amount = cursor.getInt(3);
+                    String start = cursor.getString(4);
+                    String end = cursor.getString(5);
+
+                    if (start == null || start.length() < 7) continue;
+
+                    Calendar cal = Calendar.getInstance();
+                    try {
+                        String[] p = start.split("-");
+                        cal.set(Integer.parseInt(p[0]), Integer.parseInt(p[1]) - 1, 1);
+                    } catch (Exception e) { continue; }
+
+                    while (!cal.after(now)) {
+                        String monthStr = String.format("%d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
+
+                        if (end != null && monthStr.compareTo(end.substring(0,7)) > 0) break;
+
+                        // Kiểm tra đã tồn tại chưa
+                        String check = "SELECT 1 FROM expense_tracking WHERE user_id = ? AND description = ? AND substr(date,1,7) = ?";
+                        Cursor c = db.rawQuery(check, new String[]{String.valueOf(userId), "Recurring #" + recId, monthStr});
+                        if (c.getCount() == 0) {
+                            ContentValues cv = new ContentValues();
+                            cv.put("user_id", userId);
+                            cv.put("category", category);
+                            cv.put("category_id", catId);
+                            cv.put("amount", amount);
+                            cv.put("date", monthStr + "-01");
+                            cv.put("description", "Recurring #" + recId);
+                            db.insert("expense_tracking", null, cv);
+                        }
+                        c.close();
+                        cal.add(Calendar.MONTH, 1);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (cursor != null) cursor.close();
+            }
+        }
         //Ánh
         public long addBudgetSetting(int userId, String category, int categoryId, int limitAmount, String month) {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -474,6 +608,73 @@ import java.util.Calendar;
             }
 
             cursor.close();
+            return list;
+        }
+        public long addExpense(int userId, String category, int categoryId,
+                               int amount, String date, String description) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put(TABLE_EXPENSETRACKING_COLUM_USER_ID, userId);
+            cv.put(TABLE_EXPENSETRACKING_COLUM_CATEGORY, category);
+            cv.put(TABLE_EXPENSETRACKING_COLUM_CATEGORY_ID, categoryId);
+            cv.put(TABLE_EXPENSETRACKING_COLUM_AMOUNT, amount);
+            cv.put(TABLE_EXPENSETRACKING_COLUM_DATE, date);           // yyyy-MM-dd
+            cv.put(TABLE_EXPENSETRACKING_COLUM_DESCRIPTION, description);
+
+            long id = db.insert(TABLE_EXPENSETRACKING, null, cv);
+            db.close();
+            return id;
+        }
+
+        public int updateExpense(int id, String category, int categoryId,
+                                 int amount, String date, String description) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+            cv.put(TABLE_EXPENSETRACKING_COLUM_CATEGORY, category);
+            cv.put(TABLE_EXPENSETRACKING_COLUM_CATEGORY_ID, categoryId);
+            cv.put(TABLE_EXPENSETRACKING_COLUM_AMOUNT, amount);
+            cv.put(TABLE_EXPENSETRACKING_COLUM_DATE, date);
+            cv.put(TABLE_EXPENSETRACKING_COLUM_DESCRIPTION, description);
+
+            int rows = db.update(TABLE_EXPENSETRACKING, cv,
+                    TABLE_EXPENSETRACKING_COLUM_ID + "=?", new String[]{String.valueOf(id)});
+            db.close();
+            return rows;
+        }
+
+        public int deleteExpense(int id) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            int rows = db.delete(TABLE_EXPENSETRACKING,
+                    TABLE_EXPENSETRACKING_COLUM_ID + "=?", new String[]{String.valueOf(id)});
+            db.close();
+            return rows;
+        }
+
+        public ArrayList<ExpenseItem> getAllExpenses(int userId) {
+            ArrayList<ExpenseItem> list = new ArrayList<>();
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            String query = "SELECT id, category, category_id, amount, date, description " +
+                    "FROM " + TABLE_EXPENSETRACKING +
+                    " WHERE user_id = ? ORDER BY date DESC";
+
+            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+
+            if (cursor.moveToFirst()) {
+                do {
+                    list.add(new ExpenseItem(
+                            cursor.getInt(0),
+                            cursor.getString(1),
+                            cursor.getInt(2),
+                            cursor.getInt(3),
+                            cursor.getString(4),
+                            cursor.getString(5),
+                            userId
+                    ));
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            db.close();
             return list;
         }
 }

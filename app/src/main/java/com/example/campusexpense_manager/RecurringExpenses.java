@@ -3,6 +3,7 @@ package com.example.campusexpense_manager;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -165,6 +166,9 @@ public class RecurringExpenses extends AppCompatActivity {
                 list.add(new RecurringItem((int) id, category, amount, startMonth, endMonth.isEmpty() ? null : endMonth));
                 adapter.notifyItemInserted(list.size() - 1);
                 Toast.makeText(this, "Added successfully!", Toast.LENGTH_SHORT).show();
+
+                // QUAN TRỌNG: Áp dụng ngay recurring mới này
+                databaseHelper.applyAllRecurringExpenses(userId);
             } else {
                 // Cập nhật
                 databaseHelper.updateRecurringExpense(item.getId(), category, categoryId, amount, startMonth,
@@ -175,16 +179,29 @@ public class RecurringExpenses extends AppCompatActivity {
                 item.setEndMonth(endMonth.isEmpty() ? null : endMonth);
                 adapter.notifyDataSetChanged();
                 Toast.makeText(this, "Updated successfully!", Toast.LENGTH_SHORT).show();
+
+                // Cập nhật → cần áp dụng lại toàn bộ lại để xóa cái cũ, thêm cái mới
+                databaseHelper.applyAllRecurringExpenses(userId);
             }
         });
 
         if (item != null) {
             builder.setNeutralButton("Delete", (dialog, which) -> {
                 databaseHelper.deleteRecurringExpense(item.getId());
+
+                // Xóa các expense có description chứa "Recurring #itemId"
+                SQLiteDatabase db = databaseHelper.getWritableDatabase();
+                db.delete("expense_tracking",
+                        "user_id = AND description = ?",
+                        new String[]{String.valueOf(userId), "Recurring #" + item.getId()});
+
                 int pos = list.indexOf(item);
                 list.remove(pos);
                 adapter.notifyItemRemoved(pos);
                 Toast.makeText(this, "Deleted!", Toast.LENGTH_SHORT).show();
+
+                // Áp dụng lại toàn bộ (để đảm bảo sạch)
+                databaseHelper.applyAllRecurringExpenses(userId);
             });
         }
 
@@ -196,6 +213,7 @@ public class RecurringExpenses extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        databaseHelper.applyAllRecurringExpenses(userId); // Đảm bảo luôn mới nhất
         loadRecurringExpenses();
     }
 }

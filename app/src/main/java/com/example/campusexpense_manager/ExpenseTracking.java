@@ -1,44 +1,28 @@
 package com.example.campusexpense_manager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
-
-import androidx.activity.EdgeToEdge;
+import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.ArrayList;
 
 public class ExpenseTracking extends AppCompatActivity {
-    ImageButton ibtHome, ibtInfor;
+    DatabaseHelper dbHelper;
+    int userId;
+    ActivityResultLauncher<Intent> addEditLauncher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_expense_tracking);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-        ibtHome = findViewById(R.id.ibtHome);
-        ibtInfor = findViewById(R.id.ibtInfor);
 
-        ibtHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ExpenseTracking.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-        ibtInfor.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(ExpenseTracking.this, Infor.class);
-                startActivity(intent);
-            }
-        });
+        // Bottom navigation (you already have)
+        findViewById(R.id.ibtHome).setOnClickListener(
+                v -> startActivity(new Intent(this, MainActivity.class)));
+        findViewById(R.id.ibtInfor).setOnClickListener(
+                v -> startActivity(new Intent(this, Infor.class)));
     }
 }

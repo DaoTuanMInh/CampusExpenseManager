@@ -31,7 +31,6 @@ public class RecurringExpenses extends AppCompatActivity {
     FloatingActionButton fabAdd;
     ArrayList<RecurringItem> list;
     RecurringAdapter adapter;
-
     ImageButton ibtHome, ibtInfor;
     DatabaseHelper databaseHelper;
     int userId;
@@ -70,8 +69,7 @@ public class RecurringExpenses extends AppCompatActivity {
     }
 
     private void loadData() {
-        // Đổi tên method cho đúng nghĩa (nhưng vẫn dùng lại bảng cũ)
-        list = databaseHelper.getAllRecurringExpenses(userId);  // bạn sẽ thêm method này trong DatabaseHelper
+        list = databaseHelper.getAllRecurringExpenses(userId);
         adapter = new RecurringAdapter(list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
@@ -106,13 +104,20 @@ public class RecurringExpenses extends AppCompatActivity {
                 (view, year, month, day) -> {
                     calendar.set(year, month, 1);
                     edtStartMonth.setText(sdf.format(calendar.getTime()));
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 1).show());
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH), 1
+        ).show());
 
         edtEndMonth.setOnClickListener(v -> new DatePickerDialog(this,
-                (view, year, month, day) -> {
-                    calendar.set(year, month, 1);
+                (view, year, month, dayOfMonth) -> {
+                    calendar.set(year, month, dayOfMonth);  // Giữ nguyên ngày người dùng chọn
                     edtEndMonth.setText(sdf.format(calendar.getTime()));
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), 1).show());
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        ).show());
 
         builder.setPositiveButton(item == null ? "Add" : "Save", (dialog, which) -> {
             String category = edtCategory.getText().toString().trim();
@@ -143,22 +148,22 @@ public class RecurringExpenses extends AppCompatActivity {
             }
 
             if (item == null) {
-                // THÊM MỚI → chỉ lưu vào recurring_expenses (giờ là ngân sách định kỳ)
+                // THÊM MỚI → chỉ lưu vào recurring_expenses
                 databaseHelper.addRecurringExpense(userId, category, categoryId, amount, startMonth,
                         endMonth.isEmpty() ? null : endMonth);
                 Toast.makeText(this, "Added recurring budget!", Toast.LENGTH_SHORT).show();
             } else {
-                // CHỈNH SỬA → cập nhật bản ghi
+                // KHI SỬA → CẬP NHẬT + làm mới lại toàn bộ budget_setting
                 databaseHelper.updateRecurringExpense(item.getId(), category, categoryId, amount, startMonth,
                         endMonth.isEmpty() ? null : endMonth);
+
                 item.setCategory(category);
                 item.setAmount(amount);
                 item.setStartMonth(startMonth);
                 item.setEndMonth(endMonth.isEmpty() ? null : endMonth);
-                adapter.notifyDataSetChanged();
+
                 Toast.makeText(this, "Updated!", Toast.LENGTH_SHORT).show();
             }
-
             databaseHelper.applyRecurringToExpenseTracking(userId);
             loadData();
         });
@@ -168,8 +173,10 @@ public class RecurringExpenses extends AppCompatActivity {
                 databaseHelper.deleteRecurringExpense(item.getId());
                 list.remove(item);
                 adapter.notifyDataSetChanged();
-                databaseHelper.applyRecurringToExpenseTracking(userId); // cập nhật lại limit các tháng
-                Toast.makeText(this, "Deleted recurring budget", Toast.LENGTH_SHORT).show();
+                // Làm mới lại toàn bộ sau khi xóa
+                databaseHelper.applyRecurringToExpenseTracking(userId);
+                loadData();
+                Toast.makeText(this, "Recurring budget deleted", Toast.LENGTH_SHORT).show();
             });
         }
 

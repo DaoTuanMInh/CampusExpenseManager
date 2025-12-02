@@ -6,7 +6,7 @@ public class ExpenseItem {
     private String category;
     private int categoryId;
     private int amount;
-    private String date;         // format yyyy-MM-dd
+    private String date;
     private String description;
     private int userId;
 

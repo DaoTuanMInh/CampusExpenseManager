@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
         // Tính và hiển thị tổng chi tiêu và tổng ngân sách cho tháng hiện tại
         Calendar cal = Calendar.getInstance();
         String yearMonth = String.format(Locale.getDefault(), "%d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
-        int totalExpense = dbHelper.getTotalExpenseForMonth(userId, yearMonth);
-        int totalBudget = dbHelper.getTotalBudgetForMonth(userId, yearMonth);
+        long totalExpense = dbHelper.getTotalExpenseForMonth(userId, yearMonth);
+        long totalBudget = dbHelper.getTotalBudgetForMonth(userId, yearMonth);
 
         txExpense.setText("Total expenses: " + totalExpense);
         txBudget.setText("Total budget: " + totalBudget);
@@ -128,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
         dbHelper.applyRecurringToExpenseTracking(userId);
         Calendar cal = Calendar.getInstance();
         String yearMonth = String.format(Locale.getDefault(), "%d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1);
-        int totalExpense = dbHelper.getTotalExpenseForMonth(userId, yearMonth);
-        int totalBudget = dbHelper.getTotalBudgetForMonth(userId, yearMonth);
+        long totalExpense = dbHelper.getTotalExpenseForMonth(userId, yearMonth);
+        long totalBudget = dbHelper.getTotalBudgetForMonth(userId, yearMonth);
 
         txExpense.setText("Total expenses: " + totalExpense);
         txBudget.setText("Total budget: " + totalBudget);

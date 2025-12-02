@@ -49,7 +49,6 @@ public class ExpenseReports extends AppCompatActivity {
             return insets;
         });
 
-
         tvTotalRemaining = findViewById(R.id.tvTotalRemaining);
         tvLastMonth = findViewById(R.id.tvLastMonth);
         tvThisMonth = findViewById(R.id.tvThisMonth);
@@ -64,7 +63,7 @@ public class ExpenseReports extends AppCompatActivity {
         currentMonth = calendar.get(Calendar.MONTH) + 1; // tháng từ 1-12
 
         dbHelper.applyRecurringToExpenseTracking(userId);
-
+        loadMonth(currentMonth);
         // Hiển thị mặc định tháng này
         loadMonth(currentMonth);
 
@@ -108,8 +107,6 @@ public class ExpenseReports extends AppCompatActivity {
         int remaining = dbHelper.getTotalRemaining(userId, yearMonth);
         tvTotalRemaining.setText("Remaining Budget: " + remaining);
 
-        // Xóa các row cũ
-        // Xóa các row cũ
         tbReportDetails.removeViews(1, tbReportDetails.getChildCount() - 1);
 
         Cursor cursor = dbHelper.getExpenseDetailsByYearMonth(userId, yearMonth);

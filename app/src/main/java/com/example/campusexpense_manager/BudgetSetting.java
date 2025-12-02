@@ -34,7 +34,6 @@ public class BudgetSetting extends AppCompatActivity {
     FloatingActionButton fabAdd;
     ArrayList<BudgetItem> list;
     BudgetAdapter adapter;
-
     ImageButton ibtHome, ibtInfor;
     DatabaseHelper databaseHelper;
     int userId;
@@ -110,7 +109,7 @@ public class BudgetSetting extends AppCompatActivity {
                     BudgetSetting.this,
                     (view, year, month, dayOfMonth) -> {
                         calendar.set(year, month, dayOfMonth);
-                        edtDate.setText(sdf.format(calendar.getTime()));  // yyyy-MM
+                        edtDate.setText(sdf.format(calendar.getTime()));
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
@@ -131,7 +130,7 @@ public class BudgetSetting extends AppCompatActivity {
 
             long limitAmount;
             try {
-                limitAmount = Long.parseLong(limitStr); // <-- FIX ở đây
+                limitAmount = Long.parseLong(limitStr);
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Invalid amount", Toast.LENGTH_SHORT).show();
                 return;
@@ -142,7 +141,7 @@ public class BudgetSetting extends AppCompatActivity {
             if (categoryId == -1) {
                 categoryId = databaseHelper.addCategoryAndReturnId(userId, category);
                 if (categoryId == -1) {
-                    Toast.makeText(this, "Lỗi khi tạo danh mục mới!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Error creating new category!", Toast.LENGTH_SHORT).show();
                     return;
                 }
             }

@@ -11,10 +11,8 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -82,15 +80,8 @@ public class BudgetSetting extends AppCompatActivity {
 
         fabAdd.setOnClickListener(v -> showAddEditDialog(null));
 
-        ibtHome.setOnClickListener(v -> {
-            Intent intent = new Intent(BudgetSetting.this, MainActivity.class);
-            startActivity(intent);
-        });
-
-        ibtInfor.setOnClickListener(v -> {
-            Intent intent = new Intent(BudgetSetting.this, Infor.class);
-            startActivity(intent);
-        });
+        ibtHome.setOnClickListener(v -> startActivity(new Intent(BudgetSetting.this, MainActivity.class)));
+        ibtInfor.setOnClickListener(v -> startActivity(new Intent(BudgetSetting.this, Infor.class)));
     }
 
     private void showAddEditDialog(BudgetItem item) {
@@ -98,17 +89,17 @@ public class BudgetSetting extends AppCompatActivity {
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_edit, null);
         builder.setView(dialogView);
 
-        EditText edtCategory = dialogView.findViewById(R.id.edtEat);  // Renamed to edtCategory
-        EditText edtLimit = dialogView.findViewById(R.id.edtMoney);
-        EditText edtDate = dialogView.findViewById(R.id.edtDate);
+        EditText edtCategory = dialogView.findViewById(R.id.edtEat);  // Danh mục
+        EditText edtLimit = dialogView.findViewById(R.id.edtMoney);   // Giới hạn
+        EditText edtDate = dialogView.findViewById(R.id.edtDate);     // Tháng
 
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM", Locale.getDefault());  // Changed to yyyy-MM
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM", Locale.getDefault());
 
         if (item != null) {
             builder.setTitle("Edit Budget");
             edtCategory.setText(item.getCategory());
-            edtLimit.setText(String.valueOf(item.getLimitAmount()));
+            edtLimit.setText(String.valueOf(item.getLimitAmount())); // long
             edtDate.setText(item.getMonth());
         } else {
             builder.setTitle("Add Budget");
@@ -119,7 +110,7 @@ public class BudgetSetting extends AppCompatActivity {
                     BudgetSetting.this,
                     (view, year, month, dayOfMonth) -> {
                         calendar.set(year, month, dayOfMonth);
-                        edtDate.setText(sdf.format(calendar.getTime()));  // Save as yyyy-MM
+                        edtDate.setText(sdf.format(calendar.getTime()));  // yyyy-MM
                     },
                     calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
@@ -138,18 +129,16 @@ public class BudgetSetting extends AppCompatActivity {
                 return;
             }
 
-            int limitAmount;
+            long limitAmount;
             try {
-                limitAmount = Integer.parseInt(limitStr);
+                limitAmount = Long.parseLong(limitStr); // <-- FIX ở đây
             } catch (NumberFormatException e) {
                 Toast.makeText(this, "Invalid amount", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // === TỰ ĐỘNG TẠO DANH MỤC NẾU CHƯA TỒN TẠI ===
+            // Tạo category nếu chưa có
             int categoryId = databaseHelper.getCategoryIdByName(category, userId);
-
-// Nếu chưa có → tự động tạo mới
             if (categoryId == -1) {
                 categoryId = databaseHelper.addCategoryAndReturnId(userId, category);
                 if (categoryId == -1) {
@@ -157,16 +146,15 @@ public class BudgetSetting extends AppCompatActivity {
                     return;
                 }
             }
-// === KẾT THÚC TỰ ĐỘNG TẠO ===
 
             if (item == null) {
-                databaseHelper.addBudgetSetting(userId, category, categoryId, limitAmount, month);
-                list.add(new BudgetItem(0, category, limitAmount, month));
+                databaseHelper.addBudgetSetting(userId, category, categoryId, (int) limitAmount, month);
+                list.add(new BudgetItem(0, category, (int) limitAmount, month));
                 adapter.notifyItemInserted(list.size() - 1);
             } else {
-                databaseHelper.updateBudgetSetting(item.getId(), category, categoryId, limitAmount, month);
+                databaseHelper.updateBudgetSetting(item.getId(), category, categoryId, (int) limitAmount, month);
                 item.setCategory(category);
-                item.setLimitAmount(limitAmount);
+                item.setLimitAmount((int) limitAmount);
                 item.setMonth(month);
                 adapter.notifyItemChanged(list.indexOf(item));
             }
@@ -185,9 +173,6 @@ public class BudgetSetting extends AppCompatActivity {
         builder.show();
     }
 
-    // ===============================
-    // Adapter
-    // ===============================
     public static class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.ViewHolder> {
         private ArrayList<BudgetItem> list;
         private OnItemClickListener listener;

@@ -667,36 +667,50 @@ import java.util.Locale;
             db.close();
             return list;
         }
-        // home
-        // Thêm 2 method này vào cuối class DatabaseHelper.java (trước dấu })
 
-        public int getTotalExpenseForMonth(int userId, String yearMonth) {
+        public long getTotalBudgetForMonth(int userId, String yearMonth) {
             SQLiteDatabase db = this.getReadableDatabase();
             Cursor cursor = db.rawQuery(
-                    "SELECT SUM(amount) FROM " + TABLE_EXPENSETRACKING +
-                            " WHERE user_id = ? AND substr(date, 1, 7) = ?",
+                    "SELECT SUM(limitamount) FROM budget_setting WHERE user_id = ? AND month = ?",
                     new String[]{String.valueOf(userId), yearMonth}
             );
-            int total = 0;
-            if (cursor.moveToFirst()) {
-                total = cursor.getInt(0);
-            }
+            long total = 0;
+            if (cursor.moveToFirst()) total = cursor.getLong(0);
             cursor.close();
             return total;
         }
 
-        public int getTotalBudgetForMonth(int userId, String yearMonth) {
+        public double getTotalExpenseByCategory(int userId, int categoryId) {
             SQLiteDatabase db = this.getReadableDatabase();
+            double total = 0;
+
             Cursor cursor = db.rawQuery(
-                    "SELECT SUM(limitamount) FROM " + TABLE_BUDGETSETTING +
-                            " WHERE user_id = ? AND month = ?",
-                    new String[]{String.valueOf(userId), yearMonth}
+                    "SELECT SUM(amount) FROM expense WHERE user_id = ? AND category_id = ?",
+                    new String[]{String.valueOf(userId), String.valueOf(categoryId)}
             );
-            int total = 0;
+
             if (cursor.moveToFirst()) {
-                total = cursor.getInt(0);
+                total = cursor.getDouble(0);
             }
+
             cursor.close();
             return total;
         }
-}
+
+
+
+        public long getTotalExpenseForMonth(int userId, String yearMonth) {
+            SQLiteDatabase db = this.getReadableDatabase();
+            String query = "SELECT COALESCE(SUM(amount),0) FROM " + TABLE_EXPENSETRACKING +
+                    " WHERE user_id = ? AND substr(date,1,7) = ?";
+            Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId), yearMonth});
+            long total = 0;
+            if (cursor.moveToFirst()) total = cursor.getLong(0);
+            cursor.close();
+            return total;
+        }
+
+
+
+
+    }

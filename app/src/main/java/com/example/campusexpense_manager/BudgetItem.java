@@ -3,7 +3,7 @@ package com.example.campusexpense_manager;
 public class BudgetItem {
     private int id;
     private String category;
-    private int limitAmount;
+    private long limitAmount;
     private String month;
 
     public BudgetItem(int id, String category, int limitAmount, String month) {
@@ -15,7 +15,7 @@ public class BudgetItem {
 
     public int getId() { return id; }
     public String getCategory() { return category; }
-    public int getLimitAmount() { return limitAmount; }
+    public long getLimitAmount() { return limitAmount; }
     public String getMonth() { return month; }
 
     public void setCategory(String category) { this.category = category; }

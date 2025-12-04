@@ -685,22 +685,30 @@ import java.util.Locale;
             cursor.close();
             return total;
         }
-//        public double getTotalExpenseByCategory(int userId, int categoryId) {
-//            SQLiteDatabase db = this.getReadableDatabase();
-//            double total = 0;
-//
-//            Cursor cursor = db.rawQuery(
-//                    "SELECT SUM(amount) FROM expense WHERE user_id = ? AND category_id = ?",
-//                    new String[]{String.valueOf(userId), String.valueOf(categoryId)}
-//            );
-//
-//            if (cursor.moveToFirst()) {
-//                total = cursor.getDouble(0);
-//            }
-//
-//            cursor.close();
-//            return total;
-//        }
+        public ExpenseItem getExpenseById(int expenseId, int userId) {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cursor = db.rawQuery(
+                    "SELECT id, category, category_id, amount, date, description FROM " + TABLE_EXPENSETRACKING +
+                            " WHERE id = ? AND user_id = ?",
+                    new String[]{String.valueOf(expenseId), String.valueOf(userId)}
+            );
+
+            if (cursor.moveToFirst()) {
+                ExpenseItem item = new ExpenseItem(
+                        cursor.getInt(0),
+                        cursor.getString(1),
+                        cursor.getInt(2),
+                        cursor.getInt(3),
+                        cursor.getString(4),
+                        cursor.getString(5),
+                        userId
+                );
+                cursor.close();
+                return item;
+            }
+            cursor.close();
+            return null;
+        }
         public long getTotalExpenseForMonth(int userId, String yearMonth) {
             SQLiteDatabase db = this.getReadableDatabase();
             String query = "SELECT COALESCE(SUM(amount),0) FROM " + TABLE_EXPENSETRACKING +

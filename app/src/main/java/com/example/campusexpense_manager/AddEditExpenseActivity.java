@@ -32,14 +32,22 @@ public class AddEditExpenseActivity extends AppCompatActivity {
         initViews();
         loadCategories();
 
-        // Edit mode?
-        if (getIntent().hasExtra("expense_id")) {
-            int id = getIntent().getIntExtra("expense_id", -1);
-            // You can fetch the expense from DB and fill the fields here
-            // For brevity, we just set title
-            setTitle("Edit Expense");
+        //KIỂM TRA CHẾ ĐỘ EDIT HAY ADD
+        int expenseId = getIntent().getIntExtra("expense_id", -1);
+        if (expenseId != -1) {
+            // Chế độ EDIT
+            currentExpense = dbHelper.getExpenseById(expenseId, userId); // Cần thêm hàm này vào DatabaseHelper
+            if (currentExpense != null) {
+                fillDataToForm();
+                setTitle("Edit Expense");
+            } else {
+                Toast.makeText(this, "Expense not found!", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         } else {
+            // Chế độ ADD
             setTitle("Add Expense");
+            tvDate.setText(getCurrentDate());
         }
 
         tvDate.setOnClickListener(v -> showDatePicker());
@@ -58,6 +66,24 @@ public class AddEditExpenseActivity extends AppCompatActivity {
         // default today
         tvDate.setText(new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 .format(Calendar.getInstance().getTime()));
+    }
+    //Đổ dữ liệu cũ vào form
+    private void fillDataToForm() {
+        etDescription.setText(currentExpense.getDescription());
+        etAmount.setText(String.valueOf(currentExpense.getAmount()));
+        tvDate.setText(currentExpense.getDate());
+
+        // Chọn đúng category trong Spinner
+        ArrayAdapter<String> adapter = (ArrayAdapter<String>) spinnerCategory.getAdapter();
+        int position = adapter.getPosition(currentExpense.getCategory());
+        if (position >= 0) {
+            spinnerCategory.setSelection(position);
+        }
+    }
+
+    private String getCurrentDate() {
+        return new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                .format(Calendar.getInstance().getTime());
     }
     private void loadCategories() {
         // Lấy danh sách danh mục từ CSDL của user hiện tại
@@ -110,10 +136,14 @@ public class AddEditExpenseActivity extends AppCompatActivity {
             return;
         }
 
-        int amount = Integer.parseInt(amountStr);
+        int amount;
+        try {
+            amount = Integer.parseInt(amountStr);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Invalid amount", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // For simplicity we use category name only
-        // In real app you should get categoryId from DB
         int categoryId = dbHelper.getCategoryIdByName(category, userId);
         if (categoryId == -1) {
             categoryId = dbHelper.addCategoryAndReturnId(userId, category);
@@ -121,17 +151,19 @@ public class AddEditExpenseActivity extends AppCompatActivity {
 
         long result;
         if (currentExpense == null) {
+            // Add new
             result = dbHelper.addExpense(userId, category, categoryId, amount, date, desc);
         } else {
+            // Update existing
             result = dbHelper.updateExpense(currentExpense.getId(), category, categoryId, amount, date, desc);
         }
 
         if (result > 0) {
-            Toast.makeText(this, "Saved successfully", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Saved successfully!", Toast.LENGTH_SHORT).show();
             setResult(RESULT_OK);
             finish();
         } else {
-            Toast.makeText(this, "Error saving", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Save failed!", Toast.LENGTH_SHORT).show();
         }
     }
 }

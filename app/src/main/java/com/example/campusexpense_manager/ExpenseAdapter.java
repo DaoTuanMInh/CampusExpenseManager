@@ -44,12 +44,13 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ViewHold
         NumberFormat fmt = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         holder.tvAmount.setText(fmt.format(item.getAmount()));
 
+        holder.itemView.setOnClickListener(v -> listener.onEdit(item));
+
+        // Long click → Delete (có xác nhận)
         holder.itemView.setOnLongClickListener(v -> {
             listener.onDelete(item);
-            return true;
+            return true; // đã xử lý long click
         });
-
-        holder.itemView.setOnClickListener(v -> listener.onEdit(item));
     }
 
     @Override

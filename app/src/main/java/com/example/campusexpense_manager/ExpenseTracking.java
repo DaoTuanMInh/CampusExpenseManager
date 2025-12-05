@@ -70,6 +70,7 @@ public class ExpenseTracking extends AppCompatActivity implements ExpenseAdapter
     private void refreshList() {
         expenseList = dbHelper.getAllExpenses(userId);
         adapter.updateList(expenseList);
+        checkBudgetWarning();
     }
 
     @Override
@@ -94,4 +95,40 @@ public class ExpenseTracking extends AppCompatActivity implements ExpenseAdapter
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-}
+    private void checkBudgetWarning() {
+        // Lấy danh sách ngân sách hiện có
+        ArrayList<BudgetItem> budgetList = dbHelper.getAllBudgetSettings(userId);
+
+        // Duyệt qua từng category trong ngân sách
+        for (BudgetItem budget : budgetList) {
+            String category = budget.getCategory();
+            // Dùng long để tránh tràn số nếu ngân sách lớn
+            long budgetLimit = budget.getLimitAmount();
+
+            // Tính tổng chi tiêu trong category này
+            long totalExpense = 0; // Dùng long để tránh tràn số
+            for (ExpenseItem expense : expenseList) {
+                if (expense.getCategory().equalsIgnoreCase(category)) {
+                    totalExpense += expense.getAmount();
+                }
+            }
+
+            if (budgetLimit <= 0) {
+                continue;
+            }
+
+            // Tính % sử dụng
+            float percentFloat = (totalExpense * 100.0f) / budgetLimit;
+
+            // Làm tròn thành số nguyên gần nhất để hiển thị
+            int percent = Math.round(percentFloat);
+
+            // --- BỎ QUA PHẦN HIỂN THỊ THÔNG BÁO TOAST ---
+            // if (percent >= 100) {
+            //     Toast.makeText(this, "⚠️ Bạn đã vượt ngân sách " + category + " " + percent + "%!", Toast.LENGTH_LONG).show();
+            // } else if (percent >= 80) {
+                Toast.makeText(this, "⚠️ Ngân sách " + category + " sắp hết (" + percent + "%)!", Toast.LENGTH_SHORT).show();
+            // }
+        }
+
+    }}

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,6 +8,40 @@
     android:layout_height="match_parent"
     tools:context=".ExpenseTracking">
 
+    <!-- Banner cảnh báo nổi trên đầu -->
+    <LinearLayout
+        android:id="@+id/layoutBudgetAlert"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="12dp"
+        android:background="#FFCDD2"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvBudgetAlert"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cảnh báo ngân sách"
+            android:textColor="#B71C1C"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <ImageButton
+            android:id="@+id/ibtCloseAlert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:contentDescription="Đóng cảnh báo"/>
+    </LinearLayout>
+
+    <!-- Hình nền -->
     <ImageView
         android:id="@+id/imageView6"
         android:layout_width="wrap_content"
@@ -19,6 +54,7 @@
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/pick" />
 
+    <!-- Tiêu đề -->
     <TextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
@@ -30,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/layoutBudgetAlert" />
 
     <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
@@ -56,6 +92,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@android:drawable/ic_menu_add" />
 
+    <!-- Bottom navigation -->
     <LinearLayout
         android:id="@+id/liner"
         android:layout_width="0dp"

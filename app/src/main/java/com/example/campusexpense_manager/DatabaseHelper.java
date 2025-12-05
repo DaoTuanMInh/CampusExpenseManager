@@ -677,4 +677,22 @@ import java.util.Locale;
             db.close();
             return list;
         }
-}
+
+        public double getTotalExpenseByCategory(int userId, int categoryId) {
+            SQLiteDatabase db = this.getReadableDatabase();
+            double total = 0;
+
+            Cursor cursor = db.rawQuery(
+                    "SELECT SUM(amount) FROM expense WHERE user_id = ? AND category_id = ?",
+                    new String[]{String.valueOf(userId), String.valueOf(categoryId)}
+            );
+
+            if (cursor.moveToFirst()) {
+                total = cursor.getDouble(0);
+            }
+
+            cursor.close();
+            return total;
+        }
+
+    }
